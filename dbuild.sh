@@ -28,8 +28,8 @@ if [ ! -f "supd.tar.gz" ]; then
     wget https://lib10.cn/download/supd.tar.gz
     tar -xzf supd.tar.gz
 fi
-if [ ! -f "picoclaw-launcher.tar.gz" ]; then
-    wget https://lib10.cn/download/picoclaw-launcher.tar.gz
+if [ ! -f "picoclaw.tar.gz" ]; then
+    wget https://lib10.cn/download/picoclaw.tar.gz
     tar -xzf picoclaw.tar.gz
 fi
 
