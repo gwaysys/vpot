@@ -1,20 +1,25 @@
 # /bin/sh
 
+PRJ_NAME=vpot
+
 # docker build configuration
 echo \
 'FROM docker.1ms.run/library/debian:12.8
 MAINTAINER SHU <free1139@163.com>
 
+COPY ./sources.list /etc/apt/sources.list
 RUN apt-get update && apt-get install -y ca-certificates
+RUN mkdir /etc/supd/
+RUN mkdir /etc/supd/conf.d/
 
 COPY ./supd/bin/supd /usr/local/bin
 COPY ./supd/bin/supc /usr/local/bin
-COPY ./supd/etc/supd /etc
+COPY ./supd/etc/supd/supd.ini /etc/supd/
 
-COPY ./picoclaw-launcher /usr/local/bin
-COPY ./etc/supd/picoclaw-launcher.ini /etc/supd/supd.conf
+COPY ./picoclaw/picoclaw-launcher /usr/local/bin
+COPY ./picoclaw/picoclaw-launcher.ini /etc/supd/conf.d/
 
-CMD ["/usr/local/bin/supd", "-c","etc/supd.conf"]
+CMD ["/usr/local/bin/supd", "-c","/etc/supd/supd.ini"]
 '>Dockerfile
 
 # build bin data

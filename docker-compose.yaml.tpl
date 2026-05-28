@@ -1,11 +1,12 @@
 services:
   vpot:
     container_name: vpot
-    image: docker.lib10.cn/vpot/vpot:v0.0.1
+    image: vpot:latest
     volumes:
       - ./data:/root/.picoclaw
     network_mode: host
-    command: ./supd -c /vpot/etc/supd/supd.conf
+    command: ./supd -c etc/supd/supd.ini
+    logging: # /var/lib/docker/containers/<docker container is>/<id>-json.log
       driver: "json-file"
       options:
         max-size: "100m"

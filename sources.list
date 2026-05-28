@@ -1,0 +1,10 @@
+# See /etc/apt/sources.list.d/debian.sources
+
+deb http://mirrors.ustc.edu.cn/debian/ bookworm main non-free non-free-firmware contrib
+deb-src http://mirrors.ustc.edu.cn/debian/ bookworm main non-free non-free-firmware contrib
+deb http://mirrors.ustc.edu.cn/debian-security/ bookworm-security main
+deb-src http://mirrors.ustc.edu.cn/debian-security/ bookworm-security main
+deb http://mirrors.ustc.edu.cn/debian/ bookworm-updates main non-free non-free-firmware contrib
+deb-src http://mirrors.ustc.edu.cn/debian/ bookworm-updates main non-free non-free-firmware contrib
+deb http://mirrors.ustc.edu.cn/debian/ bookworm-backports main non-free non-free-firmware contrib
+deb-src http://mirrors.ustc.edu.cn/debian/ bookworm-backports main non-free non-free-firmware contrib
