@@ -8,7 +8,7 @@ echo \
 MAINTAINER SHU <free1139@163.com>
 
 COPY ./sources.list /etc/apt/sources.list
-RUN apt-get update && apt-get install -y ca-certificates
+RUN apt-get update && apt-get install -y ca-certificates sudo
 RUN mkdir /etc/supd/
 RUN mkdir /etc/supd/conf.d/
 
