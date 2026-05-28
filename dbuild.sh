@@ -16,6 +16,7 @@ COPY ./supd/bin/supd /usr/local/bin
 COPY ./supd/bin/supc /usr/local/bin
 COPY ./supd/etc/supd/supd.ini /etc/supd/
 
+COPY ./picoclaw/picoclaw /usr/local/bin
 COPY ./picoclaw/picoclaw-launcher /usr/local/bin
 COPY ./picoclaw/picoclaw-launcher.ini /etc/supd/conf.d/
 
