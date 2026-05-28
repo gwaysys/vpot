@@ -5,7 +5,7 @@ services:
     volumes:
       - ./data:/root/.picoclaw
     network_mode: host
-    command: ./supd -c etc/supd/supd.ini
+    command: /usr/local/bin/supd -c etc/supd/supd.ini
     logging: # /var/lib/docker/containers/<docker container is>/<id>-json.log
       driver: "json-file"
       options:
