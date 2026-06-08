@@ -1,10 +1,11 @@
 services:
   vpot:
     container_name: vpot
-    image: vpot:latest
+    image: docker.lib10.cn/lib10/vpot:v0.0.2
     volumes:
       - ./data:/root/.picoclaw
-    network_mode: host
+    ports:
+      - 18800:18800
     command: /usr/local/bin/supd -c etc/supd/supd.ini
     logging: # /var/lib/docker/containers/<docker container is>/<id>-json.log
       driver: "json-file"

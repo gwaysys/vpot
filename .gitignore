@@ -2,4 +2,5 @@
 /publish
 /var
 /supd*
-/picoclaw*
+/picoclaw
+/*.tar.gz

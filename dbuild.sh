@@ -16,9 +16,11 @@ COPY ./supd/bin/supd /usr/local/bin
 COPY ./supd/bin/supc /usr/local/bin
 COPY ./supd/etc/supd/supd.ini /etc/supd/
 
-COPY ./picoclaw/picoclaw /usr/local/bin
-COPY ./picoclaw/picoclaw-launcher /usr/local/bin
-COPY ./picoclaw/picoclaw-launcher.ini /etc/supd/conf.d/
+COPY ./picoclaw /usr/local/picoclaw
+COPY ./picoclaw-launcher.ini /etc/supd/conf.d/
+
+ENV PATH="/usr/local/picoclaw::$PATH"
+RUN echo "export PATH=/usr/local/picoclaw:$PATH" >> ~/.bashrc
 
 CMD ["/usr/local/bin/supd", "-c","/etc/supd/supd.ini"]
 '>Dockerfile
