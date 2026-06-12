@@ -1,7 +1,7 @@
 services:
   vpot:
     container_name: vpot
-    image: docker.lib10.cn/lib10/vpot:v0.0.2
+    image: docker.lib10.cn/lib10/vpot:v0.0.3
     volumes:
       - ./data:/root/.picoclaw
     ports:
