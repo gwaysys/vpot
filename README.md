@@ -6,6 +6,7 @@ git clone https://github.comg/free1139/picoclaw.git
 cd picoclaw
 make build-launcher
 cp -rf build ../vpot/picoclaw
+cd -
 ```
 
 # Build docker image

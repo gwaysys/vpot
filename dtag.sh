@@ -2,7 +2,7 @@
 
 PRJ_NAME=vpot
 
-image_name="docker.lib10.cn/lib10/vpot"
+image_name="docker.lib10.cn/library/vpot"
 
 echo "Docker images:"
 sudo docker images|grep -E "$PRJ_NAME|$image_name"
