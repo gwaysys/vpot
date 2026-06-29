@@ -32,7 +32,6 @@ if %ERRORLEVEL% neq 0 (
 
 call :StartVpotContainers
 if %ERRORLEVEL% neq 0 (
-    pause
     exit /b 1
 )
 
@@ -123,6 +122,7 @@ exit /b 0
 
     if not exist "%ComposeFile%" (
         echo     ERROR: Compose file not found at %ComposeFile%
+        pause
         exit /b 1
     )
 
@@ -142,14 +142,38 @@ exit /b 0
     if "!composeCmd!"=="" (
         echo     ERROR: docker compose plugin nor docker-compose found.
         echo     Make sure Docker Desktop is installed and running.
+        pause
         exit /b 1
+    )
+
+    :: Check and clean up any existing vpot container to avoid name conflict
+    echo     Checking for existing vpot container...
+    docker ps -a --format "{{.Names}}" 2>nul | findstr /b /e "vpot" >nul
+    if !ERRORLEVEL! equ 0 (
+        echo     Existing vpot container found, removing it...
+        docker rm -f vpot >nul 2>&1
+        if !ERRORLEVEL! neq 0 (
+            echo     ERROR: Failed to remove existing vpot container.
+            echo     Please run the following command manually then retry:
+            echo       docker rm -f vpot
+            pause
+            exit /b 1
+        )
+        echo     Old vpot container removed successfully.
     )
 
     echo     Running: !composeCmd! -f "%ComposeFile%" up -d
     !composeCmd! -f "%ComposeFile%" up -d
 
     if !ERRORLEVEL! neq 0 (
-        echo     ERROR: docker compose failed (exit code !ERRORLEVEL!).
+        echo.
+        echo     =============================================
+        echo       ERROR: docker compose failed.
+        echo       Exit code: !ERRORLEVEL!
+        echo       Please check the output above for details.
+        echo     =============================================
+        echo.
+        pause
         exit /b 1
     )
 
