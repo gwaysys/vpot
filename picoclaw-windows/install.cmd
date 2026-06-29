@@ -22,12 +22,13 @@ if %ERRORLEVEL% neq 0 (
     call :InvokeDockerInstall
 )
 
+:retry_docker
 call :TestDockerRunning
 if %ERRORLEVEL% neq 0 (
     echo.
-    echo     Please start Docker Desktop, then re-run this script.
+    echo     Docker is not running. Start Docker Desktop and press any key to retry...
     pause
-    exit /b 1
+    goto retry_docker
 )
 
 call :StartVpotContainers
