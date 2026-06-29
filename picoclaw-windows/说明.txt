@@ -10,4 +10,4 @@
 特别说明：
 1. picoclaw智能体运行在有root权限的docker中，对话时会自动在沙箱环境中自动安装需要的环境，不会对本机造成影响，长久运行后，应适时备份好docker环境，丢失后需要重新安装;
 2. picoclaw的工作目录空间会被映射到当前目录的data下
-
+3. 源码可在https://github.com/lib10/picoclaw、https://github.com/gwaysys/vpot下查阅
