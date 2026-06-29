@@ -7,7 +7,7 @@ setlocal enabledelayedexpansion
 :: Run as Administrator for Docker Desktop installation
 
 set "ScriptDir=%~dp0"
-set "ComposeFile=%ScriptDir%docker-compose.yaml.tpl"
+set "ComposeFile=%ScriptDir%docker-compose.yaml"
 
 echo ========================================
 echo     VPOT Docker Install Script
@@ -26,11 +26,13 @@ call :TestDockerRunning
 if %ERRORLEVEL% neq 0 (
     echo.
     echo     Please start Docker Desktop, then re-run this script.
+    pause
     exit /b 1
 )
 
 call :StartVpotContainers
 if %ERRORLEVEL% neq 0 (
+    pause
     exit /b 1
 )
 
@@ -39,6 +41,7 @@ echo ========================================
 echo   VPOT deployment complete!
 echo   Service available at: http://localhost:18800
 echo ========================================
+pause
 exit /b 0
 
 :: -------------------------------------------------------------------
@@ -83,6 +86,7 @@ exit /b 0
     echo     - OR reboot your machine
     echo   Then re-run this script to continue.
     echo ========================================
+    pause
     exit /b 0
 
 :InstallDockerWinget
