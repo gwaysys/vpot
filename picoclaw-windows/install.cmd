@@ -40,6 +40,7 @@ echo ========================================
 echo   VPOT deployment complete!
 echo   Service available at: http://localhost:18800
 echo ========================================
+start "" "http://localhost:18800"
 pause
 exit /b 0
 
