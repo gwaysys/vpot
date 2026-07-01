@@ -4,9 +4,11 @@
 cd ..
 git clone https://github.comg/free1139/picoclaw.git
 cd picoclaw
-make build-launcher
-cp -rf build ../vpot/picoclaw
+./build.sh
 cd -
+cp /var/www/html/picoclaw.tar.gz .
+rm -rf picoclaw
+tar -xzf picoclaw.tar.gz
 ```
 
 # Build docker image
