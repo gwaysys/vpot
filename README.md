@@ -2,7 +2,7 @@
 # Build picoclaw binnary
 ```
 cd ..
-git clone https://github.comg/free1139/picoclaw.git
+git clone https://git.yilingtu.com/lib10/picoclaw.git
 cd picoclaw
 ./build.sh
 cd -
