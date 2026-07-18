@@ -1,11 +1,13 @@
 services:
   vpot:
     container_name: vpot
-    image: docker.lib10.cn/library/vpot:v1.0.6
+    image: docker.lib10.cn/library/vpot:v1.0.7
     volumes:
       - ./data:/root/.picoclaw
     ports:
-      - 18800:18800
+      - 18800:18800 # for https
+      - 18801:18801    # for http (tcp)
+      - 18801:18801/udp # for auto service discovery
     command: /usr/local/bin/supd -c etc/supd/supd.ini
     logging: # /var/lib/docker/containers/<docker container is>/<id>-json.log
       driver: "json-file"

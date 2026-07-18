@@ -1,1 +1,0 @@
-picoclaw-windows/docker-compose.yaml
