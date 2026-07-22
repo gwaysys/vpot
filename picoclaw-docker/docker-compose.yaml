@@ -1,7 +1,7 @@
 services:
   vpot:
     container_name: vpot
-    image: docker.lib10.cn/library/vpot:v1.0.8
+    image: docker.lib10.cn/library/vpot:v1.1.0
     volumes:
       - ./data:/root/.picoclaw
     network_mode: "host"
