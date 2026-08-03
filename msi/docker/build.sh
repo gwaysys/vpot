@@ -20,4 +20,7 @@ go-msi set-guid --path wix.json >/dev/null 2>&1 || true
 echo "==> go-msi make -> $MSI_FILE"
 go-msi make --msi "$MSI_FILE" --version "$VERSION" --arch amd64 --path wix.json
 
+# 等待 wine 后台进程(wineserver)退出,避免 docker run 结束时残留/卡住
+wineserver -w 2>/dev/null || true
+
 echo "构建完成: /build/$MSI_FILE"
