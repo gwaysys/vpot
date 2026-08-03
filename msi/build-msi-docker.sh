@@ -48,13 +48,17 @@ fi
 mkdir -p "$CTX"
 cp -f "$GO_MSI" "$CTX/go-msi"
 rm -rf "$CTX/templates"
+# 模板来自 Go module cache(只读 0444),cp -r 会保留只读权限导致后续无法清理,
+# 复制后显式恢复写权限
 if [ -d "$(go env GOPATH)/bin/templates" ]; then
+    chmod -R u+w "$(go env GOPATH)/bin/templates" 2>/dev/null || true
     cp -r "$(go env GOPATH)/bin/templates" "$CTX/"
 else
     SRC="$(ls -d "$(go env GOMODCACHE)/github.com/mat007/go-msi@*" 2>/dev/null | head -1 || true)"
     [ -n "$SRC" ] || die "未找到 go-msi 模板(module cache),请先执行: go install github.com/mat007/go-msi@latest"
     cp -r "$SRC/templates" "$CTX/"
 fi
+chmod -R u+w "$CTX/templates"
 
 # 3. 构建镜像(首次较慢:wine + WiX + wine-mono 下载安装)
 step "构建镜像 $IMAGE(首次需下载 wine + WiX + wine-mono,耗时较长)"
