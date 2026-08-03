@@ -1,0 +1,27 @@
+{
+  "product": "VPOT",
+  "company": "lib10",
+  "upgrade-code": "0364aa07-e538-4290-b1fb-fba6403c9e2e",
+  "files": [
+    "vpot-bootstrap.exe",
+    "docker-compose.yaml",
+    "readme.txt"
+  ],
+  "shortcuts": [
+    {
+      "name": "VPOT",
+      "description": "VPOT 环境检测与启动向导",
+      "location": "program",
+      "target": "[INSTALLDIR]vpot-bootstrap.exe",
+      "wdir": "INSTALLDIR"
+    }
+  ],
+  "hooks": [
+    {
+      "command": "cmd /c start \"VPOT\" /D \"[INSTALLDIR]\" \"[INSTALLDIR]vpot-bootstrap.exe\"",
+      "when": "install",
+      "execute": "immediate",
+      "return": "ignore"
+    }
+  ]
+}

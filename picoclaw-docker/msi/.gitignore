@@ -1,0 +1,5 @@
+# 构建产物(由 Makefile / build.ps1 生成,勿提交)
+*.exe
+*.msi
+docker-compose.yaml
+readme.txt

