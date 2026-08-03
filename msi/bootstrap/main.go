@@ -7,6 +7,11 @@
 //  4. 基于 docker-compose.yaml 拉取 vpot 镜像并启动容器,随后打开浏览器访问
 //     https://127.0.0.1:18800。
 //
+// 卸载模式(vpot-bootstrap.exe -uninstall,由 MSI 卸载钩子调用):
+//
+//	清理 VPOT 自身的容器与数据;Docker/WSL 可能被其他应用使用,
+//	仅提示并引导用户手工卸载,不自动移除。
+//
 // 工作目录:compose 文件会被同步到 %LOCALAPPDATA%\VPOT 下再执行,
 // 使 data 卷(./data)落在用户可写目录,避免 Program Files 的 ACL 问题。
 package main
@@ -35,6 +40,12 @@ const (
 var reader = bufio.NewReader(os.Stdin)
 
 func main() {
+	// -uninstall:MSI 卸载钩子调用,引导手工卸载(无需提升权限)
+	if len(os.Args) > 1 && os.Args[1] == "-uninstall" {
+		runUninstall()
+		return
+	}
+
 	printBanner()
 
 	// wsl --install / winget 需要管理员权限,MSI 或普通双击启动时以
@@ -82,6 +93,116 @@ func printBanner() {
 	fmt.Println("   环境检测 → 依赖安装 → 容器启动")
 	fmt.Println("========================================")
 	fmt.Println()
+}
+
+// runUninstall 卸载引导模式。仅清理 VPOT 自身的容器与数据目录;
+// Docker / WSL 等系统组件可能已被其他应用使用,只做提示并引导用户
+// 手工卸载,绝不自动移除。
+func runUninstall() {
+	fmt.Println("========================================")
+	fmt.Println("   VPOT 卸载向导")
+	fmt.Println("   引导手工卸载,不会自动移除系统组件")
+	fmt.Println("========================================")
+	fmt.Println()
+
+	// 第 1 步:清理 VPOT 自身的容器(数据在数据目录中,不受影响)
+	fmt.Println("------ 第 1 步:清理 VPOT 容器 ------")
+	if dockerInstalled() {
+		if dockerRunning() {
+			removeOldContainer()
+		} else {
+			fmt.Println("  Docker 未运行,跳过容器清理(数据保留在数据目录中)。")
+		}
+	} else {
+		fmt.Println("  未检测到 Docker,跳过。")
+	}
+
+	// 第 2 步:数据目录
+	dataDir := filepath.Join(os.Getenv("LocalAppData"), workSubDir)
+	if _, err := os.Stat(dataDir); err == nil {
+		fmt.Println()
+		fmt.Println("------ 第 2 步:VPOT 数据目录 ------")
+		fmt.Printf("  数据目录: %s\n", dataDir)
+		fmt.Println("  其中包含对话记录、模型配置等数据,删除后不可恢复。")
+		fmt.Println("  ----------------------------------------")
+		fmt.Println("    [A] 保留数据(推荐)")
+		fmt.Println("    [B] 删除数据(不可恢复)")
+		fmt.Println("  ----------------------------------------")
+		if !promptChoiceDefault(true) { // 无法读取输入时默认保留(A)
+			fmt.Println("  数据删除后不可恢复,请输入 DELETE 确认删除:")
+			confirm, _ := reader.ReadString('\n')
+			if strings.ToUpper(strings.TrimSpace(confirm)) != "DELETE" {
+				fmt.Println("  已取消删除,数据目录保留。")
+			} else {
+				fmt.Println("  正在删除数据目录...")
+				if err := os.RemoveAll(dataDir); err != nil {
+					fmt.Println("  删除失败(可能被占用):", err)
+				} else {
+					fmt.Println("  数据目录已删除。")
+				}
+			}
+		} else {
+			fmt.Println("  已保留数据目录。如需手动删除,请删除上述路径。")
+		}
+	}
+
+	// 第 3 步:Docker Desktop 引导(仅提示,不自动卸载)
+	if dockerInstalled() {
+		fmt.Println()
+		fmt.Println("------ 第 3 步:Docker Desktop ------")
+		fmt.Println("  检测到 Docker Desktop。")
+		fmt.Println("  它可能是随 VPOT 安装的,但也可能已被其他应用使用,")
+		fmt.Println("  是否卸载由您自行决定,本向导不会自动卸载。")
+		fmt.Println("  手工卸载方式:")
+		fmt.Println("    1) 按 Win+R 输入 appwiz.cpl 回车,在\"程序和功能\"中")
+		fmt.Println("       找到 Docker Desktop,右键选择\"卸载\";")
+		fmt.Println("    2) 或在命令提示符执行: winget uninstall --id Docker.DockerDesktop")
+		fmt.Println("  ----------------------------------------")
+		fmt.Println("    [A] 打开\"程序和功能\"(appwiz.cpl)")
+		fmt.Println("    [B] 跳过,稍后自行处理")
+		fmt.Println("  ----------------------------------------")
+		if promptChoiceDefault(false) { // 无法读取输入时默认跳过(B)
+			if err := openControlPanel("appwiz.cpl"); err != nil {
+				fmt.Println("  打开失败:", err)
+				fmt.Println("  请手动按 Win+R 输入 appwiz.cpl 回车。")
+			} else {
+				fmt.Println("  已打开\"程序和功能\"窗口。")
+			}
+		}
+	}
+
+	// 第 4 步:WSL 引导(仅提示,不自动卸载)
+	if wslInstalled() {
+		fmt.Println()
+		fmt.Println("------ 第 4 步:WSL ------")
+		fmt.Println("  检测到 WSL(适用于 Linux 的 Windows 子系统)。")
+		fmt.Println("  警告:WSL 可能已被其他应用使用;Docker Desktop(WSL2 后端)")
+		fmt.Println("  也依赖 WSL,请先卸载 Docker 再考虑移除 WSL。")
+		fmt.Println("  是否卸载由您自行决定,本向导不会自动卸载。")
+		fmt.Println("  手工卸载方式:")
+		fmt.Println("    1) 删除 Linux 发行版: wsl --unregister <发行版名>")
+		fmt.Println("    2) 关闭 WSL 功能:按 Win+R 输入 optionalfeatures 回车,")
+		fmt.Println("       取消勾选\"适用于 Linux 的 Windows 子系统\",重启后生效")
+		fmt.Println("  ----------------------------------------")
+		fmt.Println("    [A] 打开\"启用或关闭 Windows 功能\"(optionalfeatures)")
+		fmt.Println("    [B] 跳过,稍后自行处理")
+		fmt.Println("  ----------------------------------------")
+		if promptChoiceDefault(false) { // 无法读取输入时默认跳过(B)
+			if err := runCmd("optionalfeatures"); err != nil {
+				fmt.Println("  打开失败:", err)
+				fmt.Println("  请手动按 Win+R 输入 optionalfeatures 回车。")
+			} else {
+				fmt.Println("  已打开\"Windows 功能\"窗口。")
+			}
+		}
+	}
+
+	fmt.Println()
+	fmt.Println("========================================")
+	fmt.Println("  VPOT 卸载引导完成。")
+	fmt.Println("  感谢使用 VPOT!")
+	fmt.Println("========================================")
+	waitEnter("  按任意键退出...")
 }
 
 // ---------- 第 1 步:WSL ----------
@@ -370,12 +491,23 @@ func ensureAdmin() {
 }
 
 func promptChoice() bool {
+	// 安装流程默认 A/B:无法读取输入时返回 false(走 B 手动下载分支,安全侧)
+	return promptChoiceDefault(false)
+}
+
+// promptChoiceDefault 交互 A/B 选择;无法读取输入(EOF/非交互)时返回 defA。
+func promptChoiceDefault(defA bool) bool {
 	for {
 		fmt.Print("  您的选择 (A/B): ")
 		line, err := reader.ReadString('\n')
 		if err != nil {
-			fmt.Println("  输入读取失败(非交互环境),将默认打开手动下载页面。")
-			return false
+			fmt.Println("  输入读取失败(非交互环境)。")
+			if defA {
+				fmt.Println("  已按默认选择 A。")
+			} else {
+				fmt.Println("  已按默认选择 B。")
+			}
+			return defA
 		}
 		switch strings.ToUpper(strings.TrimSpace(line)) {
 		case "A":
@@ -441,4 +573,9 @@ func runDocker(args ...string) error {
 func openURL(url string) {
 	// cmd /c start "" url :打开默认浏览器(与 install-windows.cmd 一致)
 	exec.Command("cmd", "/c", "start", `""`, url).Start()
+}
+
+// openControlPanel 通过 control.exe 打开控制面板项(如 appwiz.cpl)。
+func openControlPanel(item string) error {
+	return exec.Command("control", item).Run()
 }

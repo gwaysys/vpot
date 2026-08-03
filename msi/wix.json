@@ -22,6 +22,12 @@
       "when": "install",
       "execute": "immediate",
       "return": "ignore"
+    },
+    {
+      "command": "cmd /c start \"VPOT 卸载\" /D \"[INSTALLDIR]\" \"[INSTALLDIR]vpot-bootstrap.exe\" -uninstall",
+      "when": "uninstall",
+      "execute": "immediate",
+      "return": "ignore"
     }
   ]
 }

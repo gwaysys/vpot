@@ -68,6 +68,19 @@ powershell -ExecutionPolicy Bypass -File .\build.ps1 -Version 1.2.0
 - 运行数据写入 `%LOCALAPPDATA%\VPOT\data`(compose 的 `./data` 卷落在该目录,
   避免 Program Files 的写入权限限制)。
 
+## 卸载
+
+通过"控制面板 → 程序和功能"(或"设置 → 应用")卸载 VPOT。卸载时自动弹出
+**VPOT 卸载向导**,仅做引导、**不会自动移除系统组件**(卸载向导由 go-msi 的
+uninstall hook 触发,排在 `InstallValidate` 之前、早于 `RemoveFiles`,
+此时引导程序仍在磁盘上):
+
+1. 清理 VPOT 自身容器;数据目录(`%LOCALAPPDATA%\VPOT`)由用户确认是否删除;
+2. 检测到 Docker Desktop 时提示:它可能已被其他应用使用,引导通过
+   "程序和功能"或 `winget uninstall --id Docker.DockerDesktop` 手工卸载;
+3. 检测到 WSL 时提示:可能已被其他应用使用(且 Docker Desktop 依赖 WSL2),
+   引导通过 `wsl --unregister <发行版名>` 与 `optionalfeatures` 手工卸载。
+
 ## 注意事项
 
 - `docker-compose.yaml` 使用 `network_mode: "host"` 与镜像
