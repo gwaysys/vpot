@@ -22,8 +22,8 @@ go -C bootstrap build -trimpath -ldflags "-s -w" -o ..\vpot-bootstrap.exe .
 if ($LASTEXITCODE -ne 0) { throw "go build 失败" }
 
 Write-Host "==> 2/3 复制 docker-compose.yaml 与 readme.txt"
-Copy-Item -Force ..\docker-compose.yaml .
-Copy-Item -Force ..\readme.txt .
+Copy-Item -Force ..\picoclaw-docker\docker-compose.yaml .
+Copy-Item -Force ..\picoclaw-docker\readme.txt .
 
 Write-Host "==> 3/3 生成 MSI"
 if (-not $MsiName) { $MsiName = "vpot-setup-$Version.msi" }

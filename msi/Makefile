@@ -10,8 +10,8 @@ all: bootstrap
 
 bootstrap:
 	cd bootstrap && GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=0 go build -trimpath -ldflags "-s -w" -o ../vpot-bootstrap.exe .
-	cp ../docker-compose.yaml ./docker-compose.yaml
-	cp ../readme.txt ./readme.txt
+	cp ../picoclaw-docker/docker-compose.yaml ./docker-compose.yaml
+	cp ../picoclaw-docker/readme.txt ./readme.txt
 
 clean:
 	rm -f vpot-bootstrap.exe docker-compose.yaml readme.txt *.msi

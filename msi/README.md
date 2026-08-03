@@ -23,6 +23,9 @@ msi/
 └── README.md
 ```
 
+> `docker-compose.yaml` 与 `readme.txt` 不打入仓库,构建时由
+> Makefile / build.ps1 从 `../picoclaw-docker/` 复制到本目录后一起打包。
+
 ## 构建
 
 ### Linux/macOS(仅交叉编译 bootstrap.exe)
