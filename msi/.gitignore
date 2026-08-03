@@ -5,3 +5,5 @@ docker-compose.yaml
 readme.txt
 docker/go-msi
 docker/templates
+docker/wix311-binaries.zip
+docker/wine-mono-x86.msi

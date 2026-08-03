@@ -38,7 +38,7 @@ step "构建 vpot-bootstrap.exe(交叉编译)"
 cp -f "$REPO_ROOT/picoclaw-docker/docker-compose.yaml" "$MSI_DIR/"
 cp -f "$REPO_ROOT/picoclaw-docker/readme.txt" "$MSI_DIR/"
 
-# 2. 准备构建上下文(go-msi 二进制 + 模板)
+# 2. 准备构建上下文(go-msi 二进制 + 模板 + WiX + wine-mono)
 step "准备构建上下文"
 GO_MSI="$(go env GOPATH)/bin/go-msi"
 if [ ! -x "$GO_MSI" ]; then
@@ -59,6 +59,28 @@ else
     cp -r "$SRC/templates" "$CTX/"
 fi
 chmod -R u+w "$CTX/templates"
+
+# WiX 3.11 zip:优先本地缓存(如之前下载过),否则在宿主机下载
+WIX_ZIP="$HOME/.cache/vpot-wix/wix311-binaries.zip"
+if [ -f "$WIX_ZIP" ]; then
+    cp -f "$WIX_ZIP" "$CTX/wix311-binaries.zip"
+else
+    echo "未找到本地 wix311 缓存,下载 ${WIX_URL:-https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip}"
+    wget -q --tries=3 -T 120 -O "$CTX/wix311-binaries.zip" \
+        "${WIX_URL:-https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip}" \
+        || die "下载 WiX 失败,可设置 WIX_URL 指定镜像,或手动放到 $CTX/wix311-binaries.zip"
+fi
+
+# wine-mono x86(32 位 .NET 运行时):优先本地缓存,否则在宿主机下载
+MONO_MSI="$HOME/.cache/vpot-wix/wine-mono-8.0.0-x86.msi"
+if [ -f "$MONO_MSI" ]; then
+    cp -f "$MONO_MSI" "$CTX/wine-mono-x86.msi"
+else
+    echo "未找到本地 wine-mono 缓存,下载 ${WINE_MONO_URL:-https://dl.winehq.org/wine/wine-mono/8.0.0/wine-mono-8.0.0-x86.msi}"
+    wget -q --tries=3 -T 120 -O "$CTX/wine-mono-x86.msi" \
+        "${WINE_MONO_URL:-https://dl.winehq.org/wine/wine-mono/8.0.0/wine-mono-8.0.0-x86.msi}" \
+        || die "下载 wine-mono 失败,可设置 WINE_MONO_URL 指定镜像,或手动下载 wine-mono-8.0.0-x86.msi 放到 $CTX/wine-mono-x86.msi"
+fi
 
 # 3. 构建镜像(首次较慢:wine + WiX + wine-mono 下载安装)
 step "构建镜像 $IMAGE(首次需下载 wine + WiX + wine-mono,耗时较长)"
