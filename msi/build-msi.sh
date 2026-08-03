@@ -78,18 +78,21 @@ wine reg add 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
     /d 'C:\windows\system32;C:\windows;C:\wix' /f >/dev/null 2>&1 || true
 
 # ---------- 4. 验证 candle(.NET)可运行,必要时安装 wine-mono ----------
-step "验证 candle.exe(需要 wine-mono/.NET)"
-if ! wine "$WIN_WIX/candle.exe" -h >/dev/null 2>&1; then
-    echo "candle 需要 .NET 运行时,安装 wine-mono..."
+# 注意:wine 在缺 wine32/显示驱动时失败也返回 0,必须检查输出内容而非退出码。
+step "验证 candle.exe(需要 wine32 + wine-mono/.NET)"
+if ! wine "$WIN_WIX/candle.exe" -h 2>&1 | grep -qi "windows installer\|wix toolset\|usage:"; then
+    echo "candle 无法运行。请先确认已安装 32 位 wine 支持:"
+    echo "    sudo dpkg --add-architecture i386 && sudo apt update && sudo apt install -y wine32:i386"
+    echo "尝试安装 wine-mono(.NET 运行时)..."
     if [ ! -f "$WINE_MONO_MSI" ]; then
         if ! wget -q --tries=3 -T 120 -O "$WINE_MONO_MSI" "$WINE_MONO_URL"; then
             rm -f "$WINE_MONO_MSI"
-            die "下载 wine-mono 失败。请手动下载 wine-mono-7.0.0-x86_64.msi 放到 $WINE_MONO_MSI"
+            die "下载 wine-mono 失败。请手动下载 wine-mono-8.0.0-x86_64.msi 放到 $WINE_MONO_MSI"
         fi
     fi
     wine msiexec /i "$WINE_MONO_MSI" /quiet >/dev/null 2>&1 || true
-    if ! wine "$WIN_WIX/candle.exe" -h >/dev/null 2>&1; then
-        die "candle 仍无法运行。可尝试: sudo apt install winetricks && winetricks -q dotnet48"
+    if ! wine "$WIN_WIX/candle.exe" -h 2>&1 | grep -qi "windows installer\|wix toolset\|usage:"; then
+        die "candle 仍无法运行。请安装 wine32 后重试: sudo dpkg --add-architecture i386 && sudo apt update && sudo apt install -y wine32:i386"
     fi
 fi
 echo "candle 运行正常"
