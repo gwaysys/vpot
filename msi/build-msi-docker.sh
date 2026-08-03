@@ -60,27 +60,28 @@ else
 fi
 chmod -R u+w "$CTX/templates"
 
-# WiX 3.11 zip:优先本地缓存(如之前下载过),否则在宿主机下载
-WIX_ZIP="$HOME/.cache/vpot-wix/wix311-binaries.zip"
-if [ -f "$WIX_ZIP" ]; then
-    cp -f "$WIX_ZIP" "$CTX/wix311-binaries.zip"
-else
-    echo "未找到本地 wix311 缓存,下载 ${WIX_URL:-https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip}"
-    wget -q --tries=3 -T 120 -O "$CTX/wix311-binaries.zip" \
-        "${WIX_URL:-https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip}" \
-        || die "下载 WiX 失败,可设置 WIX_URL 指定镜像,或手动放到 $CTX/wix311-binaries.zip"
-fi
+# WiX 3.11 zip 与 wine-mono:优先复用本地缓存(~/.cache/vpot-wix/),
+# 没有才下载并写入缓存(下次编译直接复用,勿手动清理缓存)
+CACHE_DIR="$HOME/.cache/vpot-wix"
+mkdir -p "$CACHE_DIR"
 
-# wine-mono x86(32 位 .NET 运行时):优先本地缓存,否则在宿主机下载
-MONO_MSI="$HOME/.cache/vpot-wix/wine-mono-8.0.0-x86.msi"
-if [ -f "$MONO_MSI" ]; then
-    cp -f "$MONO_MSI" "$CTX/wine-mono-x86.msi"
-else
-    echo "未找到本地 wine-mono 缓存,下载 ${WINE_MONO_URL:-https://dl.winehq.org/wine/wine-mono/8.0.0/wine-mono-8.0.0-x86.msi}"
-    wget -q --tries=3 -T 120 -O "$CTX/wine-mono-x86.msi" \
-        "${WINE_MONO_URL:-https://dl.winehq.org/wine/wine-mono/8.0.0/wine-mono-8.0.0-x86.msi}" \
-        || die "下载 wine-mono 失败,可设置 WINE_MONO_URL 指定镜像,或手动下载 wine-mono-8.0.0-x86.msi 放到 $CTX/wine-mono-x86.msi"
+WIX_ZIP="$CACHE_DIR/wix311-binaries.zip"
+if [ ! -f "$WIX_ZIP" ]; then
+    echo "未找到本地 wix311 缓存,下载 ${WIX_URL:-https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip}"
+    wget -q --tries=3 -T 120 -O "$WIX_ZIP" \
+        "${WIX_URL:-https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip}" \
+        || die "下载 WiX 失败,可设置 WIX_URL 指定镜像,或手动下载 wix311-binaries.zip 放到 $WIX_ZIP"
 fi
+cp -f "$WIX_ZIP" "$CTX/wix311-binaries.zip"
+
+MONO_MSI="$CACHE_DIR/wine-mono-8.0.0-x86.msi"
+if [ ! -f "$MONO_MSI" ]; then
+    echo "未找到本地 wine-mono 缓存,下载 ${WINE_MONO_URL:-https://dl.winehq.org/wine/wine-mono/8.0.0/wine-mono-8.0.0-x86.msi}"
+    wget -q --tries=3 -T 120 -O "$MONO_MSI" \
+        "${WINE_MONO_URL:-https://dl.winehq.org/wine/wine-mono/8.0.0/wine-mono-8.0.0-x86.msi}" \
+        || die "下载 wine-mono 失败,可设置 WINE_MONO_URL 指定镜像,或手动下载 wine-mono-8.0.0-x86.msi 放到 $MONO_MSI"
+fi
+cp -f "$MONO_MSI" "$CTX/wine-mono-x86.msi"
 
 # 3. 构建镜像(首次较慢:wine + WiX + wine-mono 下载安装)
 step "构建镜像 $IMAGE(首次需下载 wine + WiX + wine-mono,耗时较长)"
