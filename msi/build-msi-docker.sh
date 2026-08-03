@@ -66,20 +66,26 @@ CACHE_DIR="$HOME/.cache/vpot-wix"
 mkdir -p "$CACHE_DIR"
 
 WIX_ZIP="$CACHE_DIR/wix311-binaries.zip"
-if [ ! -f "$WIX_ZIP" ]; then
-    echo "未找到本地 wix311 缓存,下载 ${WIX_URL:-https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip}"
-    wget -q --tries=3 -T 120 -O "$WIX_ZIP" \
+# 存在且大于 10MB 才视为有效缓存(wix311 完整约 34MB)
+if [ ! -s "$WIX_ZIP" ] || [ "$(stat -c%s "$WIX_ZIP" 2>/dev/null || echo 0)" -lt 10000000 ]; then
+    echo "未找到有效 wix311 缓存,下载 ${WIX_URL:-https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip}"
+    rm -f "$WIX_ZIP"
+    wget -c -q --tries=3 -T 180 -O "$WIX_ZIP" \
         "${WIX_URL:-https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip}" \
         || die "下载 WiX 失败,可设置 WIX_URL 指定镜像,或手动下载 wix311-binaries.zip 放到 $WIX_ZIP"
+    [ "$(stat -c%s "$WIX_ZIP")" -gt 10000000 ] || die "wix311 下载不完整,请删除 $WIX_ZIP 后重试或换 WIX_URL 镜像"
 fi
 cp -f "$WIX_ZIP" "$CTX/wix311-binaries.zip"
 
 MONO_MSI="$CACHE_DIR/wine-mono-8.0.0-x86.msi"
-if [ ! -f "$MONO_MSI" ]; then
-    echo "未找到本地 wine-mono 缓存,下载 ${WINE_MONO_URL:-https://dl.winehq.org/wine/wine-mono/8.0.0/wine-mono-8.0.0-x86.msi}"
-    wget -q --tries=3 -T 120 -O "$MONO_MSI" \
+# 存在且大于 5MB 才视为有效缓存(wine-mono x86 完整约 50MB+)
+if [ ! -s "$MONO_MSI" ] || [ "$(stat -c%s "$MONO_MSI" 2>/dev/null || echo 0)" -lt 5000000 ]; then
+    echo "未找到有效 wine-mono 缓存,下载 ${WINE_MONO_URL:-https://dl.winehq.org/wine/wine-mono/8.0.0/wine-mono-8.0.0-x86.msi}"
+    rm -f "$MONO_MSI"
+    wget -c -q --tries=3 -T 180 -O "$MONO_MSI" \
         "${WINE_MONO_URL:-https://dl.winehq.org/wine/wine-mono/8.0.0/wine-mono-8.0.0-x86.msi}" \
         || die "下载 wine-mono 失败,可设置 WINE_MONO_URL 指定镜像,或手动下载 wine-mono-8.0.0-x86.msi 放到 $MONO_MSI"
+    [ "$(stat -c%s "$MONO_MSI")" -gt 5000000 ] || die "wine-mono 下载不完整,请删除 $MONO_MSI 后重试或换 WINE_MONO_URL 镜像"
 fi
 cp -f "$MONO_MSI" "$CTX/wine-mono-x86.msi"
 
