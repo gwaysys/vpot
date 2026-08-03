@@ -28,6 +28,29 @@ msi/
 
 ## 构建
 
+### Linux(推荐:Docker 容器编译完整 MSI)
+
+无需在本机安装 wine/WiX,一切在容器内完成:
+
+```sh
+# 依赖:已安装并启动 docker、go、wget
+./build-msi-docker.sh            # 默认版本 1.1.5
+./build-msi-docker.sh 1.2.0      # 指定版本
+```
+
+流程:宿主机交叉编译 `vpot-bootstrap.exe` → 构建镜像
+(`msi/docker/Dockerfile`,内含 wine+wine32、WiX 3.11、wine-mono x86、go-msi)
+→ 容器内 `go-msi make` → 产物 `vpot-setup-<版本>.msi`。
+
+首次构建镜像需下载 wine + WiX + wine-mono,较慢;网络受限时可覆盖下载源:
+
+```sh
+WIX_URL=<镜像> WINE_MONO_URL=<镜像> ./build-msi-docker.sh
+```
+
+> 说明:`candle.exe`/`light.exe` 是 32 位 .NET 程序,镜像使用 `wine32` +
+> `WINEARCH=win32` 纯 32 位 prefix + wine-mono x86,已验证可行。
+
 ### Linux/macOS(仅交叉编译 bootstrap.exe)
 
 ```sh
