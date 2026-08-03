@@ -23,7 +23,13 @@ step() { echo; echo "==> $*"; }
 die() { echo "错误: $*" >&2; exit 1; }
 
 command -v docker >/dev/null 2>&1 || die "未找到 docker,请先安装并启动: https://docs.docker.com/engine/install/debian/"
-docker info >/dev/null 2>&1 || die "docker daemon 不可用,请先启动 Docker 服务"
+
+# docker 权限:当前用户可直连则用 docker,否则自动带 sudo(需输入密码)
+DOCKER="sudo docker"
+if docker info >/dev/null 2>&1; then
+    DOCKER="docker"
+fi
+$DOCKER info >/dev/null 2>&1 || die "docker daemon 不可用,请先启动 Docker 服务(sudo systemctl start docker)"
 command -v go >/dev/null 2>&1 || die "未找到 go,请先安装 Go 工具链"
 
 # 1. 交叉编译 bootstrap + 准备打包文件
@@ -52,11 +58,16 @@ fi
 
 # 3. 构建镜像(首次较慢:wine + WiX + wine-mono 下载安装)
 step "构建镜像 $IMAGE(首次需下载 wine + WiX + wine-mono,耗时较长)"
-docker build -t "$IMAGE" "$CTX"
+$DOCKER build -t "$IMAGE" "$CTX"
 
 # 4. 容器内编译
 step "容器内编译 -> vpot-setup-$VERSION.msi"
-docker run --rm -v "$MSI_DIR":/build "$IMAGE" "vpot-setup-$VERSION.msi" "$VERSION"
+$DOCKER run --rm -v "$MSI_DIR":/build "$IMAGE" "vpot-setup-$VERSION.msi" "$VERSION"
+
+# 5. 修复产物属主(容器内以 root 写入,文件归 root 所有)
+if [ -f "$MSI_DIR/vpot-setup-$VERSION.msi" ]; then
+    sudo chown "$(id -u):$(id -g)" "$MSI_DIR/vpot-setup-$VERSION.msi" 2>/dev/null || true
+fi
 
 echo
 echo "=============================================="
