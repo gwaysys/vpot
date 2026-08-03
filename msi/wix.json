@@ -3,9 +3,15 @@
   "company": "lib10",
   "upgrade-code": "0364aa07-e538-4290-b1fb-fba6403c9e2e",
   "files": [
-    "vpot-bootstrap.exe",
-    "docker-compose.yaml",
-    "readme.txt"
+    {
+      "path": "vpot-bootstrap.exe"
+    },
+    {
+      "path": "docker-compose.yaml"
+    },
+    {
+      "path": "readme.txt"
+    }
   ],
   "shortcuts": [
     {
@@ -16,18 +22,19 @@
       "wdir": "INSTALLDIR"
     }
   ],
+  "choco": {},
   "hooks": [
     {
       "command": "cmd /c start \"VPOT\" /D \"[INSTALLDIR]\" \"[INSTALLDIR]vpot-bootstrap.exe\"",
       "when": "install",
-      "execute": "immediate",
-      "return": "ignore"
+      "return": "ignore",
+      "execute": "immediate"
     },
     {
       "command": "cmd /c start \"VPOT 卸载\" /D \"[INSTALLDIR]\" \"[INSTALLDIR]vpot-bootstrap.exe\" -uninstall",
       "when": "uninstall",
-      "execute": "immediate",
-      "return": "ignore"
+      "return": "ignore",
+      "execute": "immediate"
     }
   ]
 }
