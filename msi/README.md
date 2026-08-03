@@ -65,8 +65,10 @@ powershell -ExecutionPolicy Bypass -File .\build.ps1 -Version 1.2.0
 - 安装完成后自动弹出 VPOT 引导窗口执行四步流程(go-msi 的 install hook
   固定排在 `InstallFiles` 之后执行,此时 `vpot-bootstrap.exe` 已落盘);
 - 开始菜单生成 **VPOT** 快捷方式,可随时重新运行引导(环境修复/再次启动);
-- 运行数据写入 `%LOCALAPPDATA%\VPOT\data`(compose 的 `./data` 卷落在该目录,
-  避免 Program Files 的写入权限限制)。
+- 数据目录默认在 **`我的文档\VPOT`**(`C:\Users\<用户名>\Documents\VPOT`,
+  兼容 OneDrive 重定向),安装引导第 1 步可修改;选择结果保存在
+  `%LOCALAPPDATA%\VPOT\config.ini`,重跑向导可再次修改。
+  compose 的 `./data` 卷落在此目录下,避免 Program Files 的写入权限限制。
 
 ## 卸载
 
@@ -75,7 +77,8 @@ powershell -ExecutionPolicy Bypass -File .\build.ps1 -Version 1.2.0
 uninstall hook 触发,排在 `InstallValidate` 之前、早于 `RemoveFiles`,
 此时引导程序仍在磁盘上):
 
-1. 清理 VPOT 自身容器;数据目录(`%LOCALAPPDATA%\VPOT`)由用户确认是否删除;
+1. 清理 VPOT 自身容器;数据目录(默认 `我的文档\VPOT`,以 config.ini 记录为准)
+   由用户确认是否删除(需输入 `DELETE` 二次确认);
 2. 检测到 Docker Desktop 时提示:它可能已被其他应用使用,引导通过
    "程序和功能"或 `winget uninstall --id Docker.DockerDesktop` 手工卸载;
 3. 检测到 WSL 时提示:可能已被其他应用使用(且 Docker Desktop 依赖 WSL2),

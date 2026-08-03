@@ -12,8 +12,9 @@
 //	清理 VPOT 自身的容器与数据;Docker/WSL 可能被其他应用使用,
 //	仅提示并引导用户手工卸载,不自动移除。
 //
-// 工作目录:compose 文件会被同步到 %LOCALAPPDATA%\VPOT 下再执行,
-// 使 data 卷(./data)落在用户可写目录,避免 Program Files 的 ACL 问题。
+// 工作目录:安装向导第 1 步选择(默认 我的文档\VPOT,可修改),
+// 持久化在 %LOCALAPPDATA%\VPOT\config.ini;compose 文件与 data 卷
+// 落在该目录,避免 Program Files 的 ACL 问题。
 package main
 
 import (
@@ -53,6 +54,8 @@ func main() {
 	// :EnsureAdmin 一致),提升后新窗口自动继续。
 	ensureAdmin()
 
+	workDir := chooseWorkDir()
+
 	if !step1WSL() {
 		fmt.Println()
 		fmt.Println("  WSL 未就绪,VPOT 无法继续。请安装/重启后重新运行本向导。")
@@ -71,7 +74,7 @@ func main() {
 		waitEnter("  按任意键退出...")
 		os.Exit(1)
 	}
-	if !step4ComposeUp() {
+	if !step4ComposeUp(workDir) {
 		fmt.Println()
 		fmt.Println("  容器启动失败,请根据上方错误信息处理后重试。")
 		waitEnter("  按任意键退出...")
@@ -117,8 +120,11 @@ func runUninstall() {
 		fmt.Println("  未检测到 Docker,跳过。")
 	}
 
-	// 第 2 步:数据目录
-	dataDir := filepath.Join(os.Getenv("LocalAppData"), workSubDir)
+	// 第 2 步:数据目录(优先读配置,未配置时回退到 我的文档\VPOT)
+	dataDir := loadWorkDir()
+	if dataDir == "" {
+		dataDir = filepath.Join(documentsDir(), workSubDir)
+	}
 	if _, err := os.Stat(dataDir); err == nil {
 		fmt.Println()
 		fmt.Println("------ 第 2 步:VPOT 数据目录 ------")
@@ -133,12 +139,20 @@ func runUninstall() {
 			confirm, _ := reader.ReadString('\n')
 			if strings.ToUpper(strings.TrimSpace(confirm)) != "DELETE" {
 				fmt.Println("  已取消删除,数据目录保留。")
+			} else if !safeToDelete(dataDir) {
+				fmt.Println("  该目录不符合安全删除条件(可能为系统/用户目录或缺少 VPOT 标记),")
+				fmt.Println("  已取消删除。请手动删除: " + dataDir)
 			} else {
 				fmt.Println("  正在删除数据目录...")
 				if err := os.RemoveAll(dataDir); err != nil {
 					fmt.Println("  删除失败(可能被占用):", err)
 				} else {
 					fmt.Println("  数据目录已删除。")
+					// 同步清理配置残留;若 dataDir 在 cfgDir 内部则已被 RemoveAll 覆盖
+					cfgDir := filepath.Join(os.Getenv("LocalAppData"), workSubDir)
+					if rel, err := filepath.Rel(cfgDir, dataDir); err != nil || strings.HasPrefix(rel, "..") {
+						os.RemoveAll(cfgDir)
+					}
 				}
 			}
 		} else {
@@ -205,11 +219,149 @@ func runUninstall() {
 	waitEnter("  按任意键退出...")
 }
 
+// ---------- 数据目录选择 ----------
+
+// chooseWorkDir 引导用户确认/修改 VPOT 数据目录(默认 我的文档\VPOT),
+// 选择结果持久化到 config.ini,返回最终目录。
+func chooseWorkDir() string {
+	fmt.Println("========================================")
+	fmt.Println("  第 1 步 / 5:选择 VPOT 数据目录")
+	fmt.Println("========================================")
+	defaultDir := filepath.Join(documentsDir(), workSubDir)
+	current := loadWorkDir()
+	for {
+		if current == "" {
+			fmt.Printf("  默认目录: %s\n", defaultDir)
+			fmt.Println("  (对话记录、模型配置等数据将保存在此目录下)")
+			fmt.Println("  ----------------------------------------")
+			fmt.Println("    [A] 使用默认目录")
+			fmt.Println("    [B] 自定义目录")
+			fmt.Println("  ----------------------------------------")
+			if promptChoiceDefault(true) { // 无法读取输入时默认用默认目录
+				current = defaultDir
+			} else {
+				current = inputDir(defaultDir)
+			}
+		} else {
+			fmt.Printf("  当前目录: %s\n", current)
+			fmt.Println("  ----------------------------------------")
+			fmt.Println("    [A] 保持当前目录")
+			fmt.Println("    [B] 修改目录")
+			fmt.Println("  ----------------------------------------")
+			if promptChoiceDefault(true) {
+				// 保持
+			} else {
+				current = inputDir(current)
+			}
+		}
+		current = filepath.Clean(os.ExpandEnv(current))
+		abs, err := filepath.Abs(current)
+		if err != nil {
+			fmt.Println("  路径无效:", err, "请重新选择。")
+			current = ""
+			continue
+		}
+		current = abs
+		if err := os.MkdirAll(current, 0755); err != nil {
+			fmt.Println("  目录不可用:", err, "请重新选择。")
+			current = ""
+			continue
+		}
+		break
+	}
+	if err := saveWorkDir(current); err != nil {
+		fmt.Println("  警告:保存目录配置失败:", err)
+	}
+	fmt.Printf("  [OK] 数据目录: %s\n", current)
+	return current
+}
+
+// inputDir 提示用户输入数据目录;直接回车时回退到 fallback。
+func inputDir(fallback string) string {
+	fmt.Printf("  请输入数据目录的绝对路径(支持 %%VAR%% 环境变量,直接回车使用默认 %s):\n  > ", fallback)
+	line, _ := reader.ReadString('\n')
+	line = strings.TrimSpace(line)
+	if line == "" {
+		return fallback
+	}
+	return line
+}
+
+// documentsDir 返回"我的文档"实际路径(兼容 OneDrive 重定向),失败时回退。
+func documentsDir() string {
+	out, err := exec.Command("powershell", "-NoProfile", "-Command",
+		"[Environment]::GetFolderPath('MyDocuments')").Output()
+	if err == nil {
+		if p := strings.TrimSpace(string(out)); p != "" {
+			return p
+		}
+	}
+	if home := os.Getenv("USERPROFILE"); home != "" {
+		return filepath.Join(home, "Documents")
+	}
+	return os.Getenv("LocalAppData")
+}
+
+// safeToDelete 校验目录可安全删除:拒绝盘符根、系统目录、用户目录,
+// 并要求目录内含 compose 文件(VPOT 工作目录标记),防止误删其他数据。
+func safeToDelete(dir string) bool {
+	abs, err := filepath.Abs(dir)
+	if err != nil {
+		return false
+	}
+	abs = filepath.Clean(abs)
+	vol := filepath.VolumeName(abs)
+	if strings.EqualFold(abs, vol+string(filepath.Separator)) {
+		return false // 盘符根
+	}
+	for _, f := range []string{
+		os.Getenv("SystemRoot"),
+		os.Getenv("USERPROFILE"),
+		os.Getenv("LocalAppData"),
+		documentsDir(),
+	} {
+		if f != "" && strings.EqualFold(abs, filepath.Clean(f)) {
+			return false
+		}
+	}
+	// 只删除带 VPOT 标记(同步过 compose 文件)的目录
+	if _, err := os.Stat(filepath.Join(abs, composeFileName)); err != nil {
+		return false
+	}
+	return true
+}
+
+// configPath 配置文件的固定位置(不随数据目录移动)。
+func configPath() string {
+	return filepath.Join(os.Getenv("LocalAppData"), workSubDir, "config.ini")
+}
+
+func loadWorkDir() string {
+	data, err := os.ReadFile(configPath())
+	if err != nil {
+		return ""
+	}
+	for _, line := range strings.Split(string(data), "\n") {
+		line = strings.TrimSpace(line)
+		if rest, ok := strings.CutPrefix(line, "workdir="); ok {
+			return strings.TrimSpace(rest)
+		}
+	}
+	return ""
+}
+
+func saveWorkDir(dir string) error {
+	if err := os.MkdirAll(filepath.Dir(configPath()), 0755); err != nil {
+		return err
+	}
+	return os.WriteFile(configPath(), []byte("workdir="+dir+"\n"), 0644)
+}
+
 // ---------- 第 1 步:WSL ----------
 
 func step1WSL() bool {
 	fmt.Println("========================================")
-	fmt.Println("  第 1 步 / 4:检查 WSL(Windows Subsystem for Linux)")
+	fmt.Println("  第 2 步 / 5:检查 WSL(Windows Subsystem for Linux)")
 	fmt.Println("========================================")
 	if wslInstalled() {
 		fmt.Println("  [OK] WSL 已安装。")
@@ -259,7 +411,7 @@ func wslInstalled() bool {
 func step2DockerInstall() bool {
 	fmt.Println()
 	fmt.Println("========================================")
-	fmt.Println("  第 2 步 / 4:检查 Docker")
+	fmt.Println("  第 3 步 / 5:检查 Docker")
 	fmt.Println("========================================")
 	if dockerInstalled() {
 		fmt.Println("  [OK] Docker 已安装。")
@@ -310,7 +462,7 @@ func dockerInstalled() bool {
 func step3DockerRunning() bool {
 	fmt.Println()
 	fmt.Println("========================================")
-	fmt.Println("  第 3 步 / 4:检查 Docker 是否运行")
+	fmt.Println("  第 4 步 / 5:检查 Docker 是否运行")
 	fmt.Println("========================================")
 	if dockerRunning() {
 		fmt.Println("  [OK] Docker 正在运行。")
@@ -363,14 +515,13 @@ func waitForDocker(timeout time.Duration) bool {
 
 // ---------- 第 4 步:拉取镜像并启动容器 ----------
 
-func step4ComposeUp() bool {
+func step4ComposeUp(workDir string) bool {
 	fmt.Println()
 	fmt.Println("========================================")
-	fmt.Println("  第 4 步 / 4:拉取 vpot 镜像并启动容器")
+	fmt.Println("  第 5 步 / 5:拉取 vpot 镜像并启动容器")
 	fmt.Println("========================================")
 
-	workDir, err := prepareWorkDir()
-	if err != nil {
+	if err := prepareWorkDir(workDir); err != nil {
 		fmt.Println("  准备运行目录失败:", err)
 		return false
 	}
@@ -398,17 +549,16 @@ func step4ComposeUp() bool {
 	return true
 }
 
-// prepareWorkDir 把 compose 文件从安装目录同步到 %LOCALAPPDATA%\VPOT,
-// 保证 data 卷落在用户可写目录(Program Files 下容器内无法写入)。
-func prepareWorkDir() (string, error) {
+// prepareWorkDir 把 compose 文件从安装目录同步到数据目录 workDir,
+// 保证 data 卷(./data)落在用户可写目录(Program Files 下容器内无法写入)。
+func prepareWorkDir(workDir string) error {
 	exePath, err := os.Executable()
 	if err != nil {
-		return "", err
+		return err
 	}
 	srcDir := filepath.Dir(exePath)
-	workDir := filepath.Join(os.Getenv("LocalAppData"), workSubDir)
 	if err := os.MkdirAll(workDir, 0755); err != nil {
-		return "", err
+		return err
 	}
 	for _, name := range []string{composeFileName, "readme.txt"} {
 		src := filepath.Join(srcDir, name)
@@ -420,11 +570,11 @@ func prepareWorkDir() (string, error) {
 		old, _ := os.ReadFile(dst)
 		if !bytes.Equal(old, data) {
 			if err := os.WriteFile(dst, data, 0644); err != nil {
-				return "", err
+				return err
 			}
 		}
 	}
-	return workDir, nil
+	return nil
 }
 
 func removeOldContainer() bool {
