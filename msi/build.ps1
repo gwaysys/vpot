@@ -1,4 +1,4 @@
-# VPOT MSI 构建脚本(在 Windows 上运行)
+﻿# VPOT MSI 构建脚本(在 Windows 上运行)
 #
 # 前置要求:
 #   - Go(https://go.dev/dl/)
