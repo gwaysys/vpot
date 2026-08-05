@@ -1,300 +1,108 @@
 @echo off
 setlocal enabledelayedexpansion
+chcp 65001 >nul
 :: ============================================================
-::    VPOT Docker Install Script for Windows (batch version)
+::    VPOT Install Script for Windows (bilingual)
+::    中英双语:开始时选择语言 / Language selected at startup
 :: ============================================================
-:: Requires: Windows 10+ 64-bit or Windows 11
-:: Administrator privileges may be required for automatic installation
-
 set "ScriptDir=%~dp0"
 set "ComposeFile=%ScriptDir%docker-compose.yaml"
 
 echo ========================================
-echo     VPOT Docker Install Script
+echo          VPOT Install Script
 echo ========================================
 echo.
+echo    1. 中文 (Chinese)
+echo    2. English
+echo.
+choice /c 12 /n /m "  Select language / 请选择语言 (1=中文, 2=English) [1]: "
+if errorlevel 2 (set "LANG=en") else (set "LANG=zh")
 
-:: -------------------------------------------------------------------
-:: Main
-:: -------------------------------------------------------------------
-:: Skip the elevation prompt when re-launched elevated after user approval
-if /i "%~1"=="/confirmed" set "VPOT_CONFIRMED=1"
-
-call :PlanInstallations
-if !ERRORLEVEL! neq 0 (
-    if not defined VPOT_CONFIRMED (
-        call :EnsureAdmin
-        if !ERRORLEVEL! neq 0 (
-            echo.
-            echo   Please re-run this script as Administrator
-            echo   if the elevation was not authorized.
-            pause
-            exit /b 1
-        )
-    )
-    call :InstallMissingComponents
-    if !ERRORLEVEL! neq 0 (
-        exit /b 1
-    )
+:: ---------------- 按语言设置消息 ----------------
+if "!LANG!"=="zh" (
+    set "M_CHECK_DOCKER=[*] 正在检查 Docker 运行状态..."
+    set "M_DOCKER_RUNNING=    Docker 正在运行。"
+    set "M_DOCKER_NOT_RUNNING=    Docker 未在运行。"
+    set "M_RETRY=    请先启动 Docker Desktop,然后按任意键重新检查..."
+    set "M_START=[*] 正在启动 VPOT 容器..."
+    set "M_COMPOSE_FILE=    编排文件: !ComposeFile!"
+    set "M_COMPOSE_NOTFOUND=    错误: 找不到编排文件 !ComposeFile!"
+    set "M_NO_COMPOSE=    错误: 未找到 docker compose 或 docker-compose。"
+    set "M_NO_COMPOSE_HINT=    请确认 Docker Desktop 已安装并正在运行。"
+    set "M_CHECK_OLD=    正在检查已存在的 vpot 容器..."
+    set "M_OLD_FOUND=    发现已存在的 vpot 容器,正在移除..."
+    set "M_OLD_REMOVED=    旧 vpot 容器已移除。"
+    set "M_OLD_FAIL=    错误: 移除旧 vpot 容器失败,请手动执行: docker rm -f vpot"
+    set "M_RUNNING=    执行: !composeCmd! -f "!ComposeFile!" up -d"
+    set "M_UP_FAIL=    错误: docker compose 执行失败(exit code !ERRORLEVEL!),请查看上方输出。"
+    set "M_UP_OK=    容器启动成功。"
+    set "M_COMPLETE_TITLE=VPOT 部署完成!"
+    set "M_SERVICE_URL=服务地址:"
+    set "M_ANYKEY=按任意键退出..."
+) else (
+    set "M_CHECK_DOCKER=[*] Checking if Docker daemon is running..."
+    set "M_DOCKER_RUNNING=    Docker daemon is running."
+    set "M_DOCKER_NOT_RUNNING=    Docker daemon is NOT running."
+    set "M_RETRY=    Start Docker Desktop, then press any key to retry..."
+    set "M_START=[*] Starting VPOT containers..."
+    set "M_COMPOSE_FILE=    Compose file: !ComposeFile!"
+    set "M_COMPOSE_NOTFOUND=    ERROR: Compose file not found at !ComposeFile!"
+    set "M_NO_COMPOSE=    ERROR: Neither docker compose nor docker-compose found."
+    set "M_NO_COMPOSE_HINT=    Make sure Docker Desktop is installed and running."
+    set "M_CHECK_OLD=    Checking for existing vpot container..."
+    set "M_OLD_FOUND=    Existing vpot container found, removing it..."
+    set "M_OLD_REMOVED=    Old vpot container removed successfully."
+    set "M_OLD_FAIL=    ERROR: Failed to remove existing vpot container. Run manually: docker rm -f vpot"
+    set "M_RUNNING=    Running: !composeCmd! -f "!ComposeFile!" up -d"
+    set "M_UP_FAIL=    ERROR: docker compose failed (exit code !ERRORLEVEL!). Check the output above."
+    set "M_UP_OK=    Containers started successfully."
+    set "M_COMPLETE_TITLE=VPOT deployment complete!"
+    set "M_SERVICE_URL=Service available at:"
+    set "M_ANYKEY=Press any key to exit..."
 )
 
+echo.
+echo !M_CHECK_DOCKER!
+
+:: ---------------- Docker 运行检查(任意键重试) ----------------
 :retry_docker
-call :TestDockerRunning
-if %ERRORLEVEL% neq 0 (
+docker info >nul 2>&1
+if errorlevel 1 (
     echo.
-    echo     Docker is not running. Start Docker Desktop and press any key to retry...
-    pause
+    echo     !M_DOCKER_NOT_RUNNING!
+    echo     !M_RETRY!
+    echo.
+    pause >nul
     goto retry_docker
 )
+echo     !M_DOCKER_RUNNING!
 
+:: ---------------- 启动容器 ----------------
 call :StartVpotContainers
-if %ERRORLEVEL% neq 0 (
+if errorlevel 1 (
+    echo.
+    pause
     exit /b 1
 )
 
 echo.
 echo ========================================
-echo   VPOT deployment complete!
-echo   Service available at: http://localhost:18800
+echo   !M_COMPLETE_TITLE!
+echo   !M_SERVICE_URL! http://localhost:18800
 echo ========================================
 start "" "http://localhost:18800"
-pause
+echo.
+echo !M_ANYKEY!
+pause >nul
 exit /b 0
 
 :: -------------------------------------------------------------------
-:: Step 1: Detect Docker
-:: -------------------------------------------------------------------
-:TestDockerInstalled
-    echo [*] Checking Docker installation...
-    where docker >nul 2>&1
-    if %ERRORLEVEL% equ 0 (
-        for /f "tokens=*" %%i in ('docker --version 2^>^&1') do echo     %%i
-        exit /b 0
-    )
-    echo     Docker not found.
-    exit /b 1
-
-:TestDockerRunning
-    echo [*] Checking if Docker daemon is running...
-    docker info >nul 2>&1
-    if %ERRORLEVEL% equ 0 (
-        echo     Docker daemon is running.
-        exit /b 0
-    )
-    echo     Docker daemon is NOT running.
-    exit /b 1
-
-:: -------------------------------------------------------------------
-:: Step 1.1: Plan installs (decide what needs to be installed)
-:: -------------------------------------------------------------------
-:PlanInstallations
-    set "needDocker="
-    set "needWsl="
-    call :TestDockerInstalled
-    if %ERRORLEVEL% neq 0 (
-        set "needDocker=1"
-        call :TestWslInstalled
-        if !ERRORLEVEL! neq 0 (
-            set "needWsl=1"
-        )
-    )
-    if defined needDocker exit /b 1
-    if defined needWsl exit /b 1
-    exit /b 0
-
-:: -------------------------------------------------------------------
-:: Step 1.2: Elevate to Administrator via UAC (needed for auto-install)
-:: -------------------------------------------------------------------
-:EnsureAdmin
-    net session >nul 2>&1
-    if %ERRORLEVEL% equ 0 (
-        echo     Running with Administrator privileges.
-        exit /b 0
-    )
-    echo.
-    echo   Administrator privileges required. Requesting elevation...
-    echo   Please click "Yes" in the UAC prompt to continue.
-    powershell -NoProfile -Command "Start-Process -FilePath '%~f0' -ArgumentList '/confirmed' -Verb RunAs" >nul 2>&1
-    exit /b 1
-
-:: -------------------------------------------------------------------
-:: Step 2: Install missing components (each confirmed with the user)
-:: -------------------------------------------------------------------
-:InstallMissingComponents
-    if defined needWsl (
-        call :InstallComponentWsl
-        if !ERRORLEVEL! neq 0 (
-            exit /b 1
-        )
-    )
-    if defined needDocker (
-        call :InstallComponentDocker
-        if !ERRORLEVEL! neq 0 (
-            exit /b 1
-        )
-    )
-    exit /b 0
-
-:InstallComponentWsl
-    echo.
-    echo ========================================
-    echo   WSL 2 is not installed.
-    echo   ----------------------------------------
-    echo     [A] Auto-install via wsl --install
-    echo     [B] Download manually (opens browser)
-    echo   ----------------------------------------
-    set "wslChoice="
-    set /p "wslChoice=  Your choice (A/B): "
-    if /i "!wslChoice!"=="A" (
-        call :InstallWslAuto
-        exit /b !ERRORLEVEL!
-    )
-    call :PromptWslDownload
-    exit /b !ERRORLEVEL!
-
-:InstallComponentDocker
-    echo.
-    echo ========================================
-    echo   Docker Desktop is not installed.
-    echo   ----------------------------------------
-    echo     [A] Auto-install via winget
-    echo     [B] Download manually (opens browser)
-    echo   ----------------------------------------
-    set "dockerChoice="
-    set /p "dockerChoice=  Your choice (A/B): "
-    if /i "!dockerChoice!"=="A" (
-        call :InstallDockerAuto
-        exit /b !ERRORLEVEL!
-    )
-    call :PromptDockerDownload
-    exit /b !ERRORLEVEL!
-
-:InstallWslAuto
-    echo.
-    echo     Installing WSL via wsl --install...
-    echo     This enables required Windows features and installs a Linux distribution.
-    wsl --install
-    if %ERRORLEVEL% neq 0 (
-        echo.
-        echo     ERROR: wsl --install failed (exit code %ERRORLEVEL%).
-        echo     A browser window will open for manual installation.
-        call :PromptWslDownload
-        exit /b %ERRORLEVEL%
-    )
-    echo.
-    echo     WSL has been installed.
-    echo     A REBOOT is required before continuing.
-    echo     After reboot, re-run this script.
-    pause
-    exit /b 1
-
-:InstallDockerAuto
-    where winget >nul 2>&1
-    if %ERRORLEVEL% neq 0 (
-        echo     winget not found. Opening manual download page...
-        call :PromptDockerDownload
-        exit /b %ERRORLEVEL%
-    )
-    echo.
-    echo     Installing Docker Desktop via winget (this may take several minutes)...
-    winget install --id Docker.DockerDesktop --accept-source-agreements --accept-package-agreements --silent
-    if %ERRORLEVEL% neq 0 (
-        echo.
-        echo     ERROR: winget install failed (exit code %ERRORLEVEL%).
-        echo     A browser window will open for manual installation.
-        call :PromptDockerDownload
-        exit /b %ERRORLEVEL%
-    )
-    echo.
-    echo     Docker Desktop installed successfully.
-    echo     You may need to log out and log back in, or reboot.
-    echo     Then re-run this script to continue.
-    pause
-    exit /b 0
-
-:: -------------------------------------------------------------------
-:: Step 2.1: WSL helpers (required by Docker Desktop)
-:: -------------------------------------------------------------------
-:TestWslInstalled
-    echo [*] Checking WSL installation...
-    where wsl >nul 2>&1
-    if %ERRORLEVEL% neq 0 (
-        echo     WSL not found.
-        exit /b 1
-    )
-    wsl --status >nul 2>&1
-    if %ERRORLEVEL% equ 0 (
-        echo     WSL is installed and ready.
-        exit /b 0
-    )
-    wsl --list --quiet >nul 2>&1
-    if %ERRORLEVEL% equ 0 (
-        echo     WSL is installed (no distribution configured yet).
-        exit /b 0
-    )
-    echo     WSL is present but not fully installed/configured.
-    exit /b 1
-
-:PromptWslDownload
-    echo.
-    echo ========================================
-    echo   WSL 2 is required but not installed.
-    echo   A browser window will open to download the
-    echo   official WSL update package:
-    echo     https://lib10.cn/download/wsl.2.7.11.0.x64.msi
-    echo   Please download and run it, then reboot if prompted.
-    echo ========================================
-    echo.
-    start "" "https://lib10.cn/download/wsl.2.7.11.0.x64.msi"
-    echo     Press any key once WSL has been installed...
-    pause >nul
-    call :TestWslInstalled
-    if %ERRORLEVEL% equ 0 (
-        echo     WSL detected. Continuing...
-        exit /b 0
-    )
-    echo.
-    echo     WSL was not detected yet.
-    echo     Please install it (and reboot if prompted), then re-run this script.
-    pause
-    exit /b 1
-
-:PromptDockerDownload
-    echo.
-    echo ========================================
-    echo   Docker Desktop is not installed.
-    echo   A browser window will open to download
-    echo   Docker Desktop for Windows:
-    echo     https://www.docker.com/products/docker-desktop/
-    echo   Please download and install it manually,
-    echo   then reboot or log out/back in if prompted.
-    echo ========================================
-    echo.
-    start "" "https://www.docker.com/products/docker-desktop/"
-    echo     Press any key once Docker Desktop is installed...
-    pause >nul
-
-    call :TestDockerInstalled
-    if %ERRORLEVEL% equ 0 (
-        echo     Docker Desktop detected. Continuing...
-        exit /b 0
-    )
-    echo.
-    echo     Docker Desktop was not detected yet.
-    echo     Please install it and re-run this script.
-    pause
-    exit /b 1
-
-:: -------------------------------------------------------------------
-:: Step 3: Start containers
+:: Start VPOT containers (compose plugin detection, cleanup, up -d)
 :: -------------------------------------------------------------------
 :StartVpotContainers
-    echo [*] Starting VPOT containers...
-    echo     Compose file: %ComposeFile%
-
-    if not exist "%ComposeFile%" (
-        echo     ERROR: Compose file not found at %ComposeFile%
-        pause
+    echo     !M_COMPOSE_FILE!
+    if not exist "!ComposeFile!" (
+        echo     !M_COMPOSE_NOTFOUND!
         exit /b 1
     )
 
@@ -310,44 +118,40 @@ exit /b 0
             set "composeCmd=docker-compose"
         )
     )
-
     if "!composeCmd!"=="" (
-        echo     ERROR: docker compose plugin nor docker-compose found.
-        echo     Make sure Docker Desktop is installed and running.
-        pause
+        echo.
+        echo     !M_NO_COMPOSE!
+        echo     !M_NO_COMPOSE_HINT!
         exit /b 1
+    )
+    :: 消息在 composeCmd 确定后重设(避免空展开)
+    if "!LANG!"=="zh" (
+        set "M_RUNNING=    执行: !composeCmd! -f "!ComposeFile!" up -d"
+    ) else (
+        set "M_RUNNING=    Running: !composeCmd! -f "!ComposeFile!" up -d"
     )
 
     :: Check and clean up any existing vpot container to avoid name conflict
-    echo     Checking for existing vpot container...
+    echo     !M_CHECK_OLD!
     docker ps -a --format "{{.Names}}" 2>nul | findstr /b /e "vpot" >nul
     if !ERRORLEVEL! equ 0 (
-        echo     Existing vpot container found, removing it...
+        echo     !M_OLD_FOUND!
         docker rm -f vpot >nul 2>&1
         if !ERRORLEVEL! neq 0 (
-            echo     ERROR: Failed to remove existing vpot container.
-            echo     Please run the following command manually then retry:
-            echo       docker rm -f vpot
-            pause
+            echo.
+            echo     !M_OLD_FAIL!
             exit /b 1
         )
-        echo     Old vpot container removed successfully.
+        echo     !M_OLD_REMOVED!
     )
 
-    echo     Running: !composeCmd! -f "%ComposeFile%" up -d
-    !composeCmd! -f "%ComposeFile%" up -d
-
+    echo.
+    echo     !M_RUNNING!
+    !composeCmd! -f "!ComposeFile!" up -d
     if !ERRORLEVEL! neq 0 (
         echo.
-        echo     =============================================
-        echo       ERROR: docker compose failed.
-        echo       Exit code: !ERRORLEVEL!
-        echo       Please check the output above for details.
-        echo     =============================================
-        echo.
-        pause
+        echo     !M_UP_FAIL!
         exit /b 1
     )
-
-    echo     Containers started successfully.
+    echo     !M_UP_OK!
     exit /b 0

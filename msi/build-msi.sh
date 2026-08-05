@@ -54,6 +54,7 @@ step "准备打包文件"
 cp -f "$REPO_ROOT/picoclaw-docker/install-windows.cmd" "$MSI_DIR/"
 cp -f "$REPO_ROOT/picoclaw-docker/docker-compose.yaml" "$MSI_DIR/"
 cp -f "$REPO_ROOT/picoclaw-docker/readme.txt" "$MSI_DIR/"
+cp -f "$REPO_ROOT/picoclaw-docker/image-guide.png" "$MSI_DIR/"
 
 # 2. 准备构建上下文(go-msi 二进制 + 模板 + WiX + wine-mono,Dockerfile 直接 COPY)
 step "准备构建上下文"
