@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <WixLocalization Culture="zh-CN" Codepage="936" xmlns="http://schemas.microsoft.com/wix/2006/localization">
-  <!-- 第 1 步:WSL 说明 -->
+  <!-- 第 1 步:WSL 说明(文档化) -->
   <String Id="WslInfoDlgTitle">第 1 步 / 3:安装 WSL</String>
-  <String Id="WslInfoDlgDescription">系统缺少 WSL,请先下载并安装。</String>
-  <String Id="WslInfoDlgBody">VPOT 需要 WSL(适用于 Linux 的 Windows 子系统)。&#13;&#10;&#13;&#10;请从以下任一地址下载并安装 WSL:&#13;&#10;&#13;&#10;1. 官方地址:&#13;&#10;   https://aka.ms/wsl&#13;&#10;&#13;&#10;2. 国内镜像(推荐):&#13;&#10;   https://lib10.cn/download/wsl.2.7.11.0.x64.msi&#13;&#10;&#13;&#10;安装完成后,如有提示请重启系统,然后继续。</String>
+  <String Id="WslInfoDlgDescription">请按以下文档确认 WSL 是否安装,如果未安装请按本文档安装。</String>
+  <String Id="WslInfoDlgBody">{&amp;}文档:确认与安装 WSL&#13;&#10;&#13;&#10;【确认是否已安装】&#13;&#10;1. 打开命令提示符(cmd);&#13;&#10;2. 输入命令:wsl --status;&#13;&#10;3. 若显示&quot;适用于 Linux 的 Windows 子系统&quot;版本信息 → 已安装,点击&quot;下一步&quot;;&#13;&#10;   若提示未安装或命令不存在 → 请按下方步骤安装。&#13;&#10;&#13;&#10;【安装 WSL】&#13;&#10;1. 以管理员身份打开 PowerShell,执行:wsl --install;&#13;&#10;2. 或下载安装包:&#13;&#10;   https://lib10.cn/download/wsl.2.7.11.0.x64.msi&#13;&#10;3. 安装完成后重启电脑;&#13;&#10;4. 重新打开终端,执行 wsl --status 确认安装成功。</String>
 
-  <!-- 第 2 步:Docker 说明 -->
+  <!-- 第 2 步:Docker 说明(文档化) -->
   <String Id="DockerInfoDlgTitle">第 2 步 / 3:安装 Docker</String>
-  <String Id="DockerInfoDlgDescription">请下载并安装 Docker Desktop。</String>
-  <String Id="DockerInfoDlgBody">请从 Docker 官网下载并安装 Docker Desktop:&#13;&#10;&#13;&#10;   https://www.docker.com/products/docker-desktop/&#13;&#10;&#13;&#10;安装完成后,如系统提示请注销后重新登录或重启系统,然后继续。</String>
+  <String Id="DockerInfoDlgDescription">请按以下文档确认 Docker 是否安装,如果未安装请按本文档安装。</String>
+  <String Id="DockerInfoDlgBody">{&amp;}文档:确认与安装 Docker&#13;&#10;&#13;&#10;【确认是否已安装】&#13;&#10;1. 打开命令提示符(cmd);&#13;&#10;2. 输入命令:docker --version;&#13;&#10;3. 若显示版本号 → 已安装,点击&quot;下一步&quot;;&#13;&#10;   若提示无法识别 docker 命令 → 请按下方步骤安装。&#13;&#10;&#13;&#10;【安装 Docker】&#13;&#10;1. 下载 Docker Desktop:&#13;&#10;   https://www.docker.com/products/docker-desktop/&#13;&#10;2. 安装后注销并重新登录(或重启电脑);&#13;&#10;3. 重新打开终端,执行 docker --version 确认安装成功。</String>
 
-  <!-- 第 3 步:手动运行说明 -->
-  <String Id="RunCmdInfoDlgTitle">第 3 步 / 3:运行安装向导</String>
-  <String Id="RunCmdInfoDlgDescription">安装完成后,请手动运行安装向导。</String>
-  <String Id="RunCmdInfoDlgBody">全部依赖就绪后,请手动运行安装向导完成部署:&#13;&#10;&#13;&#10;1. 打开开始菜单,运行 &quot;VPOT&quot;(即 install-windows.cmd);&#13;&#10;2. 脚本会自动检测 WSL 与 Docker,并引导下载安装与启动服务;&#13;&#10;3. 服务启动后,浏览器访问 https://127.0.0.1:18800。&#13;&#10;&#13;&#10;现在请单击&quot;下一步&quot;开始安装文件。</String>
+  <!-- 第 3 步:安装即将完成(含目录结构与 claw 安装) -->
+  <String Id="RunCmdInfoDlgTitle">安装即将完成</String>
+  <String Id="RunCmdInfoDlgDescription">安装即将完成,请按以下文档完成 claw 的安装。</String>
+  <String Id="RunCmdInfoDlgBody">{&amp;}安装完成后:&#13;&#10;1. 打开开始菜单,点击&quot;VPOT&quot;(即 install-windows.cmd);&#13;&#10;2. 脚本将检测 WSL 与 Docker,并引导安装 claw 与启动服务;&#13;&#10;3. 服务启动后,浏览器访问 https://127.0.0.1:18800。&#13;&#10;&#13;&#10;【安装目录结构】&#13;&#10;D:\vpot\&#13;&#10;├─ install-windows.cmd   安装向导(点击运行)&#13;&#10;├─ docker-compose.yaml   容器编排&#13;&#10;└─ readme.txt            说明文档&#13;&#10;&#13;&#10;点击&quot;完成&quot;将打开安装目录。</String>
 
   <!-- 按钮 -->
   <String Id="ButtonText_Back">&lt; 上一步</String>

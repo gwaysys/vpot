@@ -215,6 +215,11 @@
       <!-- this should help to propagate env var changes -->
       <CustomActionRef Id="WixBroadcastEnvironmentChange" />
 
+      <!-- 完成后打开安装目录(点击 ExitDialog 的"完成") -->
+      <CustomAction Id="OpenInstallDir" Directory="INSTALLDIR"
+                    ExeCommand="explorer.exe [INSTALLDIR]"
+                    Impersonate="yes" Return="asyncNoWait" />
+
    </Product>
 
 </Wix>
