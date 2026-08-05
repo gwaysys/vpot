@@ -24,19 +24,34 @@
          <!--   Make sure to include custom dialogs in the installer database via a DialogRef command,
                especially if they are not included explicitly in the publish chain below -->
          <DialogRef Id="LicenseAgreementDlg_HK"/>
+         <DialogRef Id="WslInfoDlg"/>
+         <DialogRef Id="DockerInfoDlg"/>
+         <DialogRef Id="RunCmdInfoDlg"/>
 
          <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
          <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4"><![CDATA[WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
 
          <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
 
-         <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="{{if gt (.License | len) 0}}LicenseAgreementDlg_HK{{else}}InstallDirDlg{{end}}">NOT Installed</Publish>
+         <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="WslInfoDlg">NOT Installed</Publish>
          <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">Installed AND PATCH</Publish>
+
+         <!-- 第 1 步:WSL 下载说明 -->
+         <Publish Dialog="WslInfoDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
+         <Publish Dialog="WslInfoDlg" Control="Next" Event="NewDialog" Value="DockerInfoDlg">1</Publish>
+
+         <!-- 第 2 步:Docker 下载说明 -->
+         <Publish Dialog="DockerInfoDlg" Control="Back" Event="NewDialog" Value="WslInfoDlg">1</Publish>
+         <Publish Dialog="DockerInfoDlg" Control="Next" Event="NewDialog" Value="RunCmdInfoDlg">1</Publish>
+
+         <!-- 第 3 步:手动运行 install-windows.cmd 说明 -->
+         <Publish Dialog="RunCmdInfoDlg" Control="Back" Event="NewDialog" Value="DockerInfoDlg">1</Publish>
+         <Publish Dialog="RunCmdInfoDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg">1</Publish>
 
          <Publish Dialog="LicenseAgreementDlg_HK" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
          <Publish Dialog="LicenseAgreementDlg_HK" Control="Next" Event="NewDialog" Value="InstallDirDlg">LicenseAccepted = "1"</Publish>
 
-         <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="{{if gt (.License | len) 0}}LicenseAgreementDlg_HK{{else}}WelcomeDlg{{end}}">1</Publish>
+         <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="RunCmdInfoDlg">1</Publish>
          <Publish Dialog="InstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
          <Publish Dialog="InstallDirDlg" Control="Next" Event="DoAction" Value="WixUIValidatePath" Order="2">NOT WIXUI_DONTVALIDATEPATH</Publish>
          <Publish Dialog="InstallDirDlg" Control="Next" Event="SpawnDialog" Value="InvalidDirDlg" Order="3"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>

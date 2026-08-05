@@ -14,6 +14,7 @@
 set -euo pipefail
 
 VERSION="${1:-1.1.5}"
+CULTURE="${2:-zh-CN}"   # zh-CN / en-US
 MSI_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$MSI_DIR/.." && pwd)"
 CTX="$MSI_DIR/docker"
@@ -98,15 +99,15 @@ step "构建镜像 $IMAGE(首次需下载 wine + WiX + wine-mono,耗时较长)"
 $DOCKER build -t "$IMAGE" "$CTX"
 
 # 4. 容器内编译
-step "容器内编译 -> vpot-setup-$VERSION.msi"
-$DOCKER run --rm -v "$MSI_DIR":/build "$IMAGE" "vpot-setup-$VERSION.msi" "$VERSION"
+step "容器内编译 -> vpot-setup-$VERSION-$CULTURE.msi"
+$DOCKER run --rm -e CULTURE="$CULTURE" -v "$MSI_DIR":/build "$IMAGE" "vpot-setup-$VERSION-$CULTURE.msi" "$VERSION"
 
 # 5. 修复产物属主(容器内以 root 写入,文件归 root 所有)
-if [ -f "$MSI_DIR/vpot-setup-$VERSION.msi" ]; then
-    sudo chown "$(id -u):$(id -g)" "$MSI_DIR/vpot-setup-$VERSION.msi" 2>/dev/null || true
+if [ -f "$MSI_DIR/vpot-setup-$VERSION-$CULTURE.msi" ]; then
+    sudo chown "$(id -u):$(id -g)" "$MSI_DIR/vpot-setup-$VERSION-$CULTURE.msi" 2>/dev/null || true
 fi
 
 echo
 echo "=============================================="
-echo "  构建完成: $MSI_DIR/vpot-setup-$VERSION.msi"
+echo "  构建完成: $MSI_DIR/vpot-setup-$VERSION-$CULTURE.msi"
 echo "=============================================="

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WixLocalization Culture="zh-CN" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <!-- 第 1 步:WSL 说明 -->
+  <String Id="WslInfoDlgTitle" Value="第 1 步 / 3:安装 WSL" />
+  <String Id="WslInfoDlgDescription" Value="系统缺少 WSL,请先下载并安装。" />
+  <String Id="WslInfoDlgBody" Value="VPOT 需要 WSL(适用于 Linux 的 Windows 子系统)。&#13;&#10;&#13;&#10;请从以下任一地址下载并安装 WSL:&#13;&#10;&#13;&#10;1. 官方地址:&#13;&#10;   https://aka.ms/wsl&#13;&#10;&#13;&#10;2. 国内镜像(推荐):&#13;&#10;   https://lib10.cn/download/wsl.2.7.11.0.x64.msi&#13;&#10;&#13;&#10;安装完成后,如有提示请重启系统,然后继续。" />
+
+  <!-- 第 2 步:Docker 说明 -->
+  <String Id="DockerInfoDlgTitle" Value="第 2 步 / 3:安装 Docker" />
+  <String Id="DockerInfoDlgDescription" Value="请下载并安装 Docker Desktop。" />
+  <String Id="DockerInfoDlgBody" Value="请从 Docker 官网下载并安装 Docker Desktop:&#13;&#10;&#13;&#10;   https://www.docker.com/products/docker-desktop/&#13;&#10;&#13;&#10;安装完成后,如系统提示请注销后重新登录或重启系统,然后继续。" />
+
+  <!-- 第 3 步:手动运行说明 -->
+  <String Id="RunCmdInfoDlgTitle" Value="第 3 步 / 3:运行安装向导" />
+  <String Id="RunCmdInfoDlgDescription" Value="安装完成后,请手动运行安装向导。" />
+  <String Id="RunCmdInfoDlgBody" Value="全部依赖就绪后,请手动运行安装向导完成部署:&#13;&#10;&#13;&#10;1. 打开开始菜单,运行 &quot;VPOT&quot;(即 install-windows.cmd);&#13;&#10;2. 脚本会自动检测 WSL 与 Docker,并引导下载安装与启动服务;&#13;&#10;3. 服务启动后,浏览器访问 https://127.0.0.1:18800。&#13;&#10;&#13;&#10;现在请单击&quot;下一步&quot;开始安装文件。" />
+
+  <!-- 按钮 -->
+  <String Id="ButtonText_Back" Value="上一步(&lt;)" />
+  <String Id="ButtonText_Next" Value="下一步(&gt;)" />
+  <String Id="ButtonText_Cancel" Value="取消" />
+</WixLocalization>

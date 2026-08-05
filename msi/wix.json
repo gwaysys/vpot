@@ -5,16 +5,13 @@
   "upgrade-code": "0364aa07-e538-4290-b1fb-fba6403c9e2e",
   "files": [
     {
-      "path": "vpot-bootstrap.exe"
+      "path": "install-windows.cmd"
     },
     {
       "path": "docker-compose.yaml"
     },
     {
       "path": "readme.txt"
-    },
-    {
-      "path": "launch.ps1"
     }
   ],
   "shortcuts": [
@@ -22,23 +19,8 @@
       "name": "VPOT",
       "description": "VPOT setup and launch wizard",
       "location": "program",
-      "target": "[INSTALLDIR]vpot-bootstrap.exe",
+      "target": "[INSTALLDIR]install-windows.cmd",
       "wdir": "INSTALLDIR"
-    }
-  ],
-  "choco": {},
-  "hooks": [
-    {
-      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"[INSTALLDIR]launch.ps1\" -InstallDir \"[INSTALLDIR]\" -ProductCode \"[ProductCode]\"",
-      "when": "install",
-      "return": "ignore",
-      "execute": "immediate"
-    },
-    {
-      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"[INSTALLDIR]launch.ps1\" -InstallDir \"[INSTALLDIR]\" -ProductCode \"[ProductCode]\" -Uninstall",
-      "when": "uninstall",
-      "return": "ignore",
-      "execute": "immediate"
     }
   ]
 }
