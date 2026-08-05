@@ -17,7 +17,7 @@
   "shortcuts": [
     {
       "name": "VPOT",
-      "description": "VPOT 环境检测与启动向导",
+      "description": "VPOT setup and launch wizard",
       "location": "program",
       "target": "[INSTALLDIR]vpot-bootstrap.exe",
       "wdir": "INSTALLDIR"
@@ -32,7 +32,7 @@
       "execute": "immediate"
     },
     {
-      "command": "cmd /c start \"VPOT 卸载\" /D \"[INSTALLDIR]\" \"[INSTALLDIR]vpot-bootstrap.exe\" -uninstall",
+      "command": "cmd /c start \"VPOT Uninstall\" /D \"[INSTALLDIR]\" \"[INSTALLDIR]vpot-bootstrap.exe\" -uninstall",
       "when": "uninstall",
       "return": "ignore",
       "execute": "immediate"
