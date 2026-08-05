@@ -12,6 +12,9 @@
     },
     {
       "path": "readme.txt"
+    },
+    {
+      "path": "launch.ps1"
     }
   ],
   "shortcuts": [
@@ -26,13 +29,13 @@
   "choco": {},
   "hooks": [
     {
-      "command": "cmd /c start \"VPOT\" /D \"[INSTALLDIR]\" \"[INSTALLDIR]vpot-bootstrap.exe\"",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"[INSTALLDIR]launch.ps1\" -InstallDir \"[INSTALLDIR]\" -ProductCode \"[ProductCode]\"",
       "when": "install",
       "return": "ignore",
       "execute": "immediate"
     },
     {
-      "command": "cmd /c start \"VPOT Uninstall\" /D \"[INSTALLDIR]\" \"[INSTALLDIR]vpot-bootstrap.exe\" -uninstall",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"[INSTALLDIR]launch.ps1\" -InstallDir \"[INSTALLDIR]\" -ProductCode \"[ProductCode]\" -Uninstall",
       "when": "uninstall",
       "return": "ignore",
       "execute": "immediate"
