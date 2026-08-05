@@ -55,10 +55,6 @@
                <Publish Event="EndDialog" Value="Return">1</Publish>
                <Condition Action="show">Installed AND REMOVE</Condition>
             </Control>
-            <Control Id="Change" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Change)">
-               <Publish Event="EndDialog" Value="Return">1</Publish>
-               <Condition Action="show">Installed AND WIXUI_OP="Change"</Condition>
-            </Control>
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.VerifyReadyDlgTitle)"/>
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.VerifyReadyDlgDescription)"/>
             <Control Id="InstallText" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.VerifyReadyDlgInstallText)">
@@ -69,9 +65,6 @@
             </Control>
             <Control Id="RemoveText" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.VerifyReadyDlgRemoveText)">
                <Condition Action="show">Installed AND REMOVE</Condition>
-            </Control>
-            <Control Id="ChangeText" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.VerifyReadyDlgChangeText)">
-               <Condition Action="show">Installed AND WIXUI_OP="Change"</Condition>
             </Control>
          </Dialog>
 
@@ -111,9 +104,8 @@
             <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.MaintenanceTypeDlgTitle)"/>
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.MaintenanceTypeDlgDescription)"/>
-            <Control Id="ChangeButton" Type="PushButton" X="25" Y="70" Width="320" Height="32" Text="!(loc.MaintenanceTypeDlgChangeButton)"/>
-            <Control Id="RepairButton" Type="PushButton" X="25" Y="112" Width="320" Height="32" Text="!(loc.MaintenanceTypeDlgRepairButton)"/>
-            <Control Id="RemoveButton" Type="PushButton" X="25" Y="154" Width="320" Height="32" Text="!(loc.MaintenanceTypeDlgRemoveButton)"/>
+            <Control Id="RepairButton" Type="PushButton" X="25" Y="70" Width="320" Height="32" Text="!(loc.MaintenanceTypeDlgRepairButton)"/>
+            <Control Id="RemoveButton" Type="PushButton" X="25" Y="112" Width="320" Height="32" Text="!(loc.MaintenanceTypeDlgRemoveButton)"/>
          </Dialog>
 
          <!-- 取消确认 -->
@@ -191,8 +183,6 @@
          <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
          <!-- 维护模式:按钮先经 DoAction 用 VBScript 设属性(SetProperty 事件在此环境报 2812),再进确认页 -->
          <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
-         <Publish Dialog="MaintenanceTypeDlg" Control="ChangeButton" Event="DoAction" Value="SetChangeProps" Order="1">1</Publish>
-         <Publish Dialog="MaintenanceTypeDlg" Control="ChangeButton" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
          <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="DoAction" Value="SetRepairProps" Order="1">1</Publish>
          <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
          <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="DoAction" Value="SetRemoveProps" Order="1">1</Publish>
