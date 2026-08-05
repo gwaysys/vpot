@@ -76,13 +76,15 @@
          </Dialog>
 
          <!-- 安装进度 -->
-         <Dialog Id="ProgressDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes" Modeless="yes">
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
-            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ProgressDlgTitle)"/>
-            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ProgressDlgDescription)"/>
-            <Control Id="Text" Type="Text" X="25" Y="60" Width="320" Height="15" Text="!(loc.ProgressDlgText)"/>
-            <Control Id="ProgressBar" Type="ProgressBar" X="25" Y="85" Width="320" Height="15" Text="ProgressDone"/>
-            <Control Id="ActionText" Type="Text" X="25" Y="115" Width="320" Height="15" Text="[Progress1]"/>
+         <Dialog Id="ProgressDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes" Modeless="yes" TrackDiskSpace="yes">
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
+            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.ButtonText_Back)"/>
+            <Control Id="Text" Type="Text" X="25" Y="55" Width="340" Height="15" TabSkip="no" Text="[Progress1]"/>
+            <Control Id="StatusLabel" Type="Text" X="25" Y="80" Width="340" Height="10" TabSkip="no" Text="[Progress2]"/>
+            <Control Id="ProgressBar" Type="ProgressBar" X="25" Y="95" Width="340" Height="10" Text="ProgressDone"/>
+            <Control Id="ActionText" Type="Text" X="25" Y="110" Width="340" Height="10" TabSkip="no" Text="[Progress3]"/>
+            <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0"/>
+            <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0"/>
          </Dialog>
 
          <!-- 完成 -->
