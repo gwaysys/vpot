@@ -36,6 +36,7 @@ command -v go >/dev/null 2>&1 || die "未找到 go,请先安装 Go 工具链"
 # 1. 交叉编译 bootstrap + 准备打包文件
 step "构建 vpot-bootstrap.exe(交叉编译)"
 (cd "$MSI_DIR/bootstrap" && GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags "-s -w" -o ../vpot-bootstrap.exe .)
+cp -f "$REPO_ROOT/picoclaw-docker/install-windows.cmd" "$MSI_DIR/"
 cp -f "$REPO_ROOT/picoclaw-docker/docker-compose.yaml" "$MSI_DIR/"
 cp -f "$REPO_ROOT/picoclaw-docker/readme.txt" "$MSI_DIR/"
 

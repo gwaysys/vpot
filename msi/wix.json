@@ -22,5 +22,6 @@
       "target": "[INSTALLDIR]install-windows.cmd",
       "wdir": "INSTALLDIR"
     }
-  ]
+  ],
+  "choco": {}
 }

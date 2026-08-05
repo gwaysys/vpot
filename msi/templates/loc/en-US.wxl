@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<WixLocalization Culture="en-US" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+<WixLocalization Culture="en-US" Codepage="65001" xmlns="http://schemas.microsoft.com/wix/2006/localization">
   <!-- Step 1: WSL info -->
-  <String Id="WslInfoDlgTitle" Value="Step 1 / 3: Install WSL" />
-  <String Id="WslInfoDlgDescription" Value="WSL is required. Please download and install it first." />
-  <String Id="WslInfoDlgBody" Value="VPOT requires WSL (Windows Subsystem for Linux).&#13;&#10;&#13;&#10;Download and install WSL from either of the following addresses:&#13;&#10;&#13;&#10;1. Official:&#13;&#10;   https://aka.ms/wsl&#13;&#10;&#13;&#10;2. Mirror (recommended in CN):&#13;&#10;   https://lib10.cn/download/wsl.2.7.11.0.x64.msi&#13;&#10;&#13;&#10;After installation, reboot if prompted, then continue." />
+  <String Id="WslInfoDlgTitle">Step 1 / 3: Install WSL</String>
+  <String Id="WslInfoDlgDescription">WSL is required. Please download and install it first.</String>
+  <String Id="WslInfoDlgBody">VPOT requires WSL (Windows Subsystem for Linux).&#13;&#10;&#13;&#10;Download and install WSL from either of the following addresses:&#13;&#10;&#13;&#10;1. Official:&#13;&#10;   https://aka.ms/wsl&#13;&#10;&#13;&#10;2. Mirror (recommended in CN):&#13;&#10;   https://lib10.cn/download/wsl.2.7.11.0.x64.msi&#13;&#10;&#13;&#10;After installation, reboot if prompted, then continue.</String>
 
   <!-- Step 2: Docker info -->
-  <String Id="DockerInfoDlgTitle" Value="Step 2 / 3: Install Docker" />
-  <String Id="DockerInfoDlgDescription" Value="Please download and install Docker Desktop." />
-  <String Id="DockerInfoDlgBody" Value="Download and install Docker Desktop from the official website:&#13;&#10;&#13;&#10;   https://www.docker.com/products/docker-desktop/&#13;&#10;&#13;&#10;After installation, log out and back in, or reboot if prompted, then continue." />
+  <String Id="DockerInfoDlgTitle">Step 2 / 3: Install Docker</String>
+  <String Id="DockerInfoDlgDescription">Please download and install Docker Desktop.</String>
+  <String Id="DockerInfoDlgBody">Download and install Docker Desktop from the official website:&#13;&#10;&#13;&#10;   https://www.docker.com/products/docker-desktop/&#13;&#10;&#13;&#10;After installation, log out and back in, or reboot if prompted, then continue.</String>
 
   <!-- Step 3: Run wizard manually -->
-  <String Id="RunCmdInfoDlgTitle" Value="Step 3 / 3: Run the setup wizard" />
-  <String Id="RunCmdInfoDlgDescription" Value="After installation, run the setup wizard manually." />
-  <String Id="RunCmdInfoDlgBody" Value="Once all dependencies are ready, run the setup wizard to finish the deployment:&#13;&#10;&#13;&#10;1. Open the Start Menu and run &quot;VPOT&quot; (install-windows.cmd);&#13;&#10;2. The script detects WSL and Docker, guides the downloads and starts the service;&#13;&#10;3. Open https://127.0.0.1:18800 in your browser once the service is up.&#13;&#10;&#13;&#10;Click &quot;Next&quot; to start installing files." />
+  <String Id="RunCmdInfoDlgTitle">Step 3 / 3: Run the setup wizard</String>
+  <String Id="RunCmdInfoDlgDescription">After installation, run the setup wizard manually.</String>
+  <String Id="RunCmdInfoDlgBody">Once all dependencies are ready, run the setup wizard to finish the deployment:&#13;&#10;&#13;&#10;1. Open the Start Menu and run &quot;VPOT&quot; (install-windows.cmd);&#13;&#10;2. The script detects WSL and Docker, guides the downloads and starts the service;&#13;&#10;3. Open https://127.0.0.1:18800 in your browser once the service is up.&#13;&#10;&#13;&#10;Click &quot;Next&quot; to start installing files.</String>
 
   <!-- Buttons -->
-  <String Id="ButtonText_Back" Value="&lt; Back" />
-  <String Id="ButtonText_Next" Value="Next &gt;" />
-  <String Id="ButtonText_Cancel" Value="Cancel" />
+  <String Id="ButtonText_Back">&lt; Back</String>
+  <String Id="ButtonText_Next">Next &gt;</String>
+  <String Id="ButtonText_Cancel">Cancel</String>
 </WixLocalization>
