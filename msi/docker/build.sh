@@ -43,7 +43,17 @@ echo "==> go-msi set-guid(固化 GUID)"
 go-msi set-guid --path wix.json >/dev/null 2>&1 || true
 
 echo "==> go-msi make -> $MSI_FILE"
-go-msi make --msi "$MSI_FILE" --version "$VERSION" --arch amd64 --path wix.json
+if go-msi make --msi "$MSI_FILE" --version "$VERSION" --arch amd64 --path wix.json --keep; then
+    echo "go-msi make 成功"
+else
+    # wine 下 light 需要 -sval 跳过 MSI 验证(否则 LGHT0216),go-msi 命令不含该参数;
+    # 对中间 build.bat 注入 -sval 后重跑(仅 wine 场景,Windows 构建不受影响)
+    echo "wine 兼容修补:light 注入 -sval 后重跑 build.bat..."
+    OUT="$(ls -dt /tmp/go-msi* 2>/dev/null | head -1)"
+    [ -n "$OUT" ] || { echo "错误:未找到 go-msi 中间目录" >&2; exit 1; }
+    sed -i 's/^light /light -sval /' "$OUT/build.bat"
+    (cd "$OUT" && xvfb-run -a wine cmd /c build.bat) || { echo "错误:重跑 build.bat 失败" >&2; exit 1; }
+fi
 
 # 等待 wine 后台进程(wineserver)退出,避免 docker run 结束时残留/卡住
 wineserver -w 2>/dev/null || true
