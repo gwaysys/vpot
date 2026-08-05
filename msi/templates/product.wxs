@@ -184,7 +184,6 @@
       </Feature>
 
       <UI>
-         <UIRef Id="WixUI_ErrorProgressText"/>
          <!-- Define the installer UI -->
          <UIRef Id="WixUI_HK"/>
       </UI>
@@ -205,6 +204,15 @@
       <InstallExecuteSequence>
          <RemoveExistingProducts After="InstallValidate">REMOVEOLD=1</RemoveExistingProducts>
       </InstallExecuteSequence>
+
+      <!-- UI 序列:安装(欢迎→说明→目录→确认→进度→完成)/ 维护(欢迎→操作→确认→进度→完成)/ 取消 -->
+      <InstallUISequence>
+         <Show Dialog="WelcomeDlg" After="CostInitialize" Overridable="yes">NOT Installed</Show>
+         <Show Dialog="MaintenanceWelcomeDlg" After="CostInitialize" Overridable="yes">Installed</Show>
+         <Show Dialog="ProgressDlg" After="CostFinalize">1</Show>
+         <Show Dialog="ExitDialog" OnExit="success">1</Show>
+         <Show Dialog="CancelDlg" OnExit="cancel"/>
+      </InstallUISequence>
 
       <!-- this should help to propagate env var changes -->
       <CustomActionRef Id="WixBroadcastEnvironmentChange" />

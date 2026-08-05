@@ -10,35 +10,129 @@
          <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
          <Property Id="WixUI_Mode" Value="InstallDir" />
 
-         <DialogRef Id="BrowseDlg" />
-         <DialogRef Id="DiskCostDlg" />
-         <DialogRef Id="ErrorDlg" />
-         <DialogRef Id="FatalError" />
-         <DialogRef Id="FilesInUse" />
-         <DialogRef Id="MsiRMFilesInUse" />
-         <DialogRef Id="PrepareDlg" />
-         <DialogRef Id="ProgressDlg" />
-         <DialogRef Id="ResumeDlg" />
-         <DialogRef Id="UserExit" />
-
-         <!--   Make sure to include custom dialogs in the installer database via a DialogRef command,
-               especially if they are not included explicitly in the publish chain below -->
-         <DialogRef Id="LicenseAgreementDlg_HK"/>
+         <!-- 自定义对话框(三步说明 / 旧版询问)-->
          <DialogRef Id="OldVersionDlg"/>
          <DialogRef Id="WslInfoDlg"/>
          <DialogRef Id="DockerInfoDlg"/>
          <DialogRef Id="RunCmdInfoDlg"/>
 
-         <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
-         <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4"><![CDATA[WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
+         <!-- ============ 自写向导对话框(标题栏/正文全部走语言包) ============ -->
+
+         <!-- 欢迎页 -->
+         <Dialog Id="WelcomeDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
+            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Next)"/>
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)"/>
+            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.WelcomeDlgTitle)"/>
+            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.WelcomeDlgDescription)"/>
+            <Control Id="Body" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.WelcomeDlgBody)"/>
+         </Dialog>
+
+         <!-- 安装目录选择(默认 D:\vpot,可编辑) -->
+         <Dialog Id="InstallDirDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
+            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Next)"/>
+            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Back)"/>
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)"/>
+            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgTitle)"/>
+            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgDescription)"/>
+            <Control Id="FolderLabel" Type="Text" X="25" Y="70" Width="320" Height="15" NoPrefix="yes" Text="!(loc.InstallDirDlgFolderLabel)"/>
+            <Control Id="Folder" Type="PathEdit" X="25" Y="90" Width="320" Height="18" Property="WIXUI_INSTALLDIR" Indirect="yes"/>
+         </Dialog>
+
+         <!-- 安装确认(安装/修复/移除/更改共用,按模式显示) -->
+         <Dialog Id="VerifyReadyDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
+            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Back)"/>
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)"/>
+            <Control Id="Install" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Install)">
+               <Publish Event="EndDialog" Value="Return">1</Publish>
+               <Condition Action="show">NOT Installed</Condition>
+            </Control>
+            <Control Id="Repair" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Repair)">
+               <Publish Event="EndDialog" Value="Return">1</Publish>
+               <Condition Action="show">Installed AND REINSTALL</Condition>
+            </Control>
+            <Control Id="Remove" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Remove)">
+               <Publish Event="EndDialog" Value="Return">1</Publish>
+               <Condition Action="show">Installed AND REMOVE</Condition>
+            </Control>
+            <Control Id="Change" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Change)">
+               <Publish Event="EndDialog" Value="Return">1</Publish>
+               <Condition Action="show">Installed AND WIXUI_OP="Change"</Condition>
+            </Control>
+            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.VerifyReadyDlgTitle)"/>
+            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.VerifyReadyDlgDescription)"/>
+            <Control Id="InstallText" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.VerifyReadyDlgInstallText)">
+               <Condition Action="show">NOT Installed</Condition>
+            </Control>
+            <Control Id="RepairText" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.VerifyReadyDlgRepairText)">
+               <Condition Action="show">Installed AND REINSTALL</Condition>
+            </Control>
+            <Control Id="RemoveText" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.VerifyReadyDlgRemoveText)">
+               <Condition Action="show">Installed AND REMOVE</Condition>
+            </Control>
+            <Control Id="ChangeText" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.VerifyReadyDlgChangeText)">
+               <Condition Action="show">Installed AND WIXUI_OP="Change"</Condition>
+            </Control>
+         </Dialog>
+
+         <!-- 安装进度 -->
+         <Dialog Id="ProgressDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes" Modeless="yes">
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)"/>
+            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ProgressDlgTitle)"/>
+            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ProgressDlgDescription)"/>
+            <Control Id="Text" Type="Text" X="25" Y="60" Width="320" Height="15" Text="!(loc.ProgressDlgText)"/>
+            <Control Id="ProgressBar" Type="ProgressBar" X="25" Y="85" Width="320" Height="15"/>
+            <Control Id="ActionText" Type="Text" X="25" Y="115" Width="320" Height="15" Text="[Progress1]"/>
+         </Dialog>
+
+         <!-- 完成 -->
+         <Dialog Id="ExitDialog" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
+            <Control Id="Finish" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Finish)"/>
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)"/>
+            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogTitle)"/>
+            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogDescription)"/>
+            <Control Id="Body" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.ExitDialogBody)"/>
+         </Dialog>
+
+         <!-- 维护模式欢迎(重跑 MSI) -->
+         <Dialog Id="MaintenanceWelcomeDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
+            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Next)"/>
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)"/>
+            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.MaintenanceWelcomeDlgTitle)"/>
+            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.MaintenanceWelcomeDlgDescription)"/>
+            <Control Id="Body" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.MaintenanceWelcomeDlgBody)"/>
+         </Dialog>
+
+         <!-- 维护模式操作选择(更改/修复/移除) -->
+         <Dialog Id="MaintenanceTypeDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
+            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Back)"/>
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)"/>
+            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.MaintenanceTypeDlgTitle)"/>
+            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.MaintenanceTypeDlgDescription)"/>
+            <Control Id="ChangeButton" Type="PushButton" X="25" Y="70" Width="320" Height="32" Text="!(loc.MaintenanceTypeDlgChangeButton)"/>
+            <Control Id="RepairButton" Type="PushButton" X="25" Y="112" Width="320" Height="32" Text="!(loc.MaintenanceTypeDlgRepairButton)"/>
+            <Control Id="RemoveButton" Type="PushButton" X="25" Y="154" Width="320" Height="32" Text="!(loc.MaintenanceTypeDlgRemoveButton)"/>
+         </Dialog>
+
+         <!-- 取消确认 -->
+         <Dialog Id="CancelDlg" Width="260" Height="85" Title="!(loc.WindowTitle)" NoMinimize="yes">
+            <Control Id="Yes" Type="PushButton" X="72" Y="48" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Yes)">
+               <Publish Event="EndDialog" Value="Exit">1</Publish>
+            </Control>
+            <Control Id="No" Type="PushButton" X="132" Y="48" Width="56" Height="17" Text="!(loc.ButtonText_No)">
+               <Publish Event="EndDialog" Value="Return">1</Publish>
+            </Control>
+            <Control Id="Text" Type="Text" X="35" Y="20" Width="210" Height="20" Text="!(loc.CancelDlgText)"/>
+         </Dialog>
+
+         <!-- ============ 事件链 ============ -->
 
          <!-- 完成后打开安装目录 -->
          <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="OpenInstallDir" Order="1">1</Publish>
          <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
 
+         <!-- 安装:欢迎 → 旧版询问 / 三步说明 -->
          <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="OldVersionDlg">NOT Installed AND VPOT_OLD_FOUND</Publish>
          <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="WslInfoDlg">NOT Installed AND NOT VPOT_OLD_FOUND</Publish>
-         <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">Installed AND PATCH</Publish>
 
          <!-- 旧版本确认:卸载并继续(设 REMOVEOLD=1)/ 返回 / 取消退出 -->
          <Publish Dialog="OldVersionDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
@@ -58,28 +152,25 @@
          <Publish Dialog="RunCmdInfoDlg" Control="Back" Event="NewDialog" Value="DockerInfoDlg">1</Publish>
          <Publish Dialog="RunCmdInfoDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg">1</Publish>
 
-         <Publish Dialog="LicenseAgreementDlg_HK" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
-         <Publish Dialog="LicenseAgreementDlg_HK" Control="Next" Event="NewDialog" Value="InstallDirDlg">LicenseAccepted = "1"</Publish>
-
+         <!-- 目录选择 -->
          <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="RunCmdInfoDlg">1</Publish>
          <Publish Dialog="InstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
-         <Publish Dialog="InstallDirDlg" Control="Next" Event="DoAction" Value="WixUIValidatePath" Order="2">NOT WIXUI_DONTVALIDATEPATH</Publish>
-         <Publish Dialog="InstallDirDlg" Control="Next" Event="SpawnDialog" Value="InvalidDirDlg" Order="3"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
-         <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
+         <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
 
-         <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
-         <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
-
+         <!-- 确认页 -->
          <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="InstallDirDlg">NOT Installed</Publish>
          <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg">Installed</Publish>
 
+         <!-- 维护模式 -->
          <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
-
-         <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
-         <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
          <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+         <Publish Dialog="MaintenanceTypeDlg" Control="ChangeButton" Event="SetProperty" Value="WIXUI_OP=Change">1</Publish>
+         <Publish Dialog="MaintenanceTypeDlg" Control="ChangeButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+         <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="SetProperty" Value="REINSTALL=ALL REINSTALLMODE=omus">1</Publish>
+         <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+         <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="SetProperty" Value="REMOVE=ALL">1</Publish>
+         <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
       </UI>
 
-      <UIRef Id="WixUI_Common" />
    </Fragment>
 </Wix>

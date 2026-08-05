@@ -39,7 +39,8 @@ else
         sed -i 's|<?xml version="1.0" encoding="UTF-8"?>|<?xml version="1.0" encoding="GB2312"?>|' "$OUT/zh-CN.gbk.wxl"
         WXL="Z:/tmp/$(basename "$OUT")/zh-CN.gbk.wxl"
     fi
-    sed -i "s|^light |light -sval -loc \"$WXL\" |" "$OUT/build.bat"
+    # - 扩展:WixUIExtension 的 wixlib 含 ExitDialog/CancelDlg 等,与我们自写对话框同名冲突 → 移除(模板已无任何 WixUI 扩展符号)
+    sed -i -e "s|^light |light -sval -loc \"$WXL\" |" -e "s| -ext WixUIExtension||g" "$OUT/build.bat"
     (cd "$OUT" && xvfb-run -a wine cmd /c build.bat) || { echo "错误:重跑 build.bat 失败" >&2; exit 1; }
 fi
 

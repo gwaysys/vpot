@@ -39,4 +39,27 @@
   <String Id="ExitDialogTitle">Installation Complete</String>
   <String Id="ExitDialogDescription">VPOT was installed successfully</String>
   <String Id="ExitDialogBody">Open the Start Menu and run &quot;VPOT&quot; (install-windows.cmd) to finish environment checks and container deployment.&#13;&#10;Visit https://127.0.0.1:18800 once the service is up.</String>
+  <String Id="ProgressDlgDescription">Please wait while VPOT is being installed.</String>
+  <String Id="WindowTitle">VPOT Setup</String>
+  <String Id="ButtonText_Install">Install</String>
+  <String Id="ButtonText_Repair">Repair</String>
+  <String Id="ButtonText_Remove">Remove</String>
+  <String Id="ButtonText_Change">Change</String>
+  <String Id="ButtonText_Yes">Yes</String>
+  <String Id="ButtonText_No">No</String>
+  <String Id="VerifyReadyDlgTitle">Ready to Install</String>
+  <String Id="VerifyReadyDlgDescription">Confirm your installation settings</String>
+  <String Id="VerifyReadyDlgInstallText">Click &quot;Install&quot; to begin installing VPOT.</String>
+  <String Id="VerifyReadyDlgRepairText">Click &quot;Repair&quot; to repair the VPOT installation.</String>
+  <String Id="VerifyReadyDlgRemoveText">Click &quot;Remove&quot; to remove VPOT from your computer.</String>
+  <String Id="VerifyReadyDlgChangeText">Click &quot;Change&quot; to change the VPOT installation.</String>
+  <String Id="MaintenanceWelcomeDlgTitle">Maintain VPOT</String>
+  <String Id="MaintenanceWelcomeDlgDescription">Choose what you want to do with VPOT.</String>
+  <String Id="MaintenanceWelcomeDlgBody">You can change, repair or remove the VPOT installation.&#13;&#10;Click &quot;Next&quot; to continue.</String>
+  <String Id="MaintenanceTypeDlgTitle">Change, repair or remove installation</String>
+  <String Id="MaintenanceTypeDlgDescription">Choose the operation you want to perform.</String>
+  <String Id="MaintenanceTypeDlgChangeButton">Change installation</String>
+  <String Id="MaintenanceTypeDlgRepairButton">Repair installation</String>
+  <String Id="MaintenanceTypeDlgRemoveButton">Remove installation</String>
+  <String Id="CancelDlgText">Are you sure you want to cancel?</String>
 </WixLocalization>
