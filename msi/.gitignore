@@ -14,3 +14,7 @@ product.gen.wxs
 
 # MSI 表导出(msiinfo dump 副产物,勿提交)
 *.idt
+
+# 构建上下文注入产物(勿提交)
+docker/go-msi
+docker/templates
