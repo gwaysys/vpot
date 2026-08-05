@@ -1,6 +1,0 @@
-Directory	Directory_Parent	DefaultDir
-s72	S72	l255
-Directory	Directory
-INSTALLDIR	TARGETDIR	vpot
-ProgramMenuFolder	TARGETDIR	.
-TARGETDIR		SourceDir

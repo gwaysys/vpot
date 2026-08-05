@@ -11,3 +11,6 @@ docker/wine-mono-x86.msi
 *.wixobj
 *.wixpdb
 product.gen.wxs
+
+# MSI 表导出(msiinfo dump 副产物,勿提交)
+*.idt
