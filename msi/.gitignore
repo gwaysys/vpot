@@ -8,3 +8,8 @@ docker/go-msi
 docker/templates
 docker/wix311-binaries.zip
 docker/wine-mono-x86.msi
+
+# WiX 中间产物(容器内 /tmp 编译,勿提交)
+*.wixobj
+*.wixpdb
+product.gen.wxs

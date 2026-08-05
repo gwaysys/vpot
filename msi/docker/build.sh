@@ -15,13 +15,17 @@ WIX="Z:\opt\wix"
 cd /build
 
 echo "==> 渲染 product.wxs(@VERSION@/@UPGRADE_CODE@)"
-sed -e "s/@VERSION@/$VERSION/g" -e "s/@UPGRADE_CODE@/$UPGRADE_CODE/g" templates/product.wxs > product.gen.wxs
+# 在容器内临时目录编译,避免中间产物(wixobj/wixpdb/product.gen.*)污染 /build
+rm -rf /tmp/work && mkdir -p /tmp/work && cd /tmp/work
+cp -f /build/install-windows.cmd /build/docker-compose.yaml /build/readme.txt .
+sed -e "s/@VERSION@/$VERSION/g" -e "s/@UPGRADE_CODE@/$UPGRADE_CODE/g" /build/templates/product.wxs > product.gen.wxs
+cp -f /build/templates/dialogs.wxs /build/templates/InfoDialogs.wxs .
 
 echo "==> candle 编译(3 个 wxs)"
-xvfb-run -a wine "$WIX\candle.exe" -arch x64 product.gen.wxs templates/dialogs.wxs templates/InfoDialogs.wxs
+xvfb-run -a wine "$WIX\candle.exe" -arch x64 product.gen.wxs dialogs.wxs InfoDialogs.wxs
 
 echo "==> light 链接(语言包: $CULTURE)"
-xvfb-run -a wine "$WIX\light.exe" -sval -loc "Z:/build/templates/loc/$CULTURE.wxl" \
+xvfb-run -a wine "$WIX\light.exe" -sval -spdb -loc "Z:/build/templates/loc/$CULTURE.wxl" \
     -out "Z:/build/$MSI_FILE" product.gen.wixobj dialogs.wixobj InfoDialogs.wixobj
 
 # 等待 wine 后台进程(wineserver)退出,避免 docker run 结束时残留/卡住
