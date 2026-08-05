@@ -25,6 +25,12 @@
   <String Id="WelcomeDlgTitle">VPOT 安装向导</String>
   <String Id="WelcomeDlgDescription">欢迎使用 VPOT 安装程序</String>
   <String Id="WelcomeDlgBody">本向导将安装 VPOT 到您的计算机。&#13;&#10;&#13;&#10;点击&quot;下一步&quot;继续。</String>
+
+  <!-- 升级检测 -->
+  <String Id="OldVersionDlgTitle">检测到旧版本</String>
+  <String Id="OldVersionDlgDescription">已安装 VPOT 的旧版本</String>
+  <String Id="OldVersionDlgBody">检测到计算机上已安装 VPOT 的旧版本。&#13;&#10;&#13;&#10;点击&quot;卸载并继续&quot;将先卸载旧版本,再安装新版本;&#13;&#10;点击&quot;取消&quot;将退出安装。</String>
+  <String Id="OldVersionDlgNext">卸载并继续</String>
   <String Id="InstallDirDlgTitle">选择安装位置</String>
   <String Id="InstallDirDlgDescription">选择 VPOT 的安装目录</String>
   <String Id="InstallDirDlgFolderLabel">默认 D:\vpot,可修改:</String>

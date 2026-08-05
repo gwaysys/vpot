@@ -55,12 +55,24 @@
       <!-- 默认安装目录:D:\vpot(可被 InstallDirDlg 修改) -->
       <Property Id="INSTALLDIR" Value="D:\vpot" Secure="yes"/>
 
+      <!-- 升级检测:检测到同 UpgradeCode 旧版本时置 VPOT_OLD_FOUND(仅检测,不自动移除);
+           用户确认后设 REMOVEOLD=1 才执行卸载旧版 -->
+      <Upgrade Id="@UPGRADE_CODE@">
+         <UpgradeVersion OnlyDetect="yes" Property="VPOT_OLD_FOUND" Minimum="0.0.0.0"/>
+      </Upgrade>
+      <Property Id="REMOVEOLD" Value="0" Secure="yes"/>
+
       <!-- UI 序列:欢迎(正常安装先显示)→ 进度 → 完成 -->
       <InstallUISequence>
          <Show Dialog="WelcomeDlg" Before="CostFinalize">NOT Installed</Show>
          <Show Dialog="ProgressDlg" After="CostFinalize">NOT Installed</Show>
          <Show Dialog="ExitDialog" OnExit="success">NOT Installed</Show>
       </InstallUISequence>
+
+      <!-- 执行序列:仅当用户确认(REMOVEOLD=1)时,先卸载旧版本再安装新文件 -->
+      <InstallExecuteSequence>
+         <RemoveExistingProducts After="InstallValidate">REMOVEOLD=1</RemoveExistingProducts>
+      </InstallExecuteSequence>
 
    </Product>
 </Wix>

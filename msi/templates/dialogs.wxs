@@ -15,6 +15,16 @@
             <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="150" NoPrefix="yes" Text="!(loc.WelcomeDlgBody)" />
          </Dialog>
 
+         <!-- 检测到旧版本(仅 VPOT_OLD_FOUND 时由 Welcome 分支进入) -->
+         <Dialog Id="OldVersionDlg" Width="370" Height="270" Title="!(loc.OldVersionDlgTitle)" NoMinimize="yes">
+            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.OldVersionDlgNext)" />
+            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Back)" />
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)" />
+            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.OldVersionDlgTitle)" />
+            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.OldVersionDlgDescription)" />
+            <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="150" NoPrefix="yes" Text="!(loc.OldVersionDlgBody)" />
+         </Dialog>
+
          <!-- 安装目录(可编辑路径,默认 D:\vpot) -->
          <Dialog Id="InstallDirDlg" Width="370" Height="270" Title="!(loc.InstallDirDlgTitle)" NoMinimize="yes">
             <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Next)" />
@@ -44,9 +54,16 @@
          </Dialog>
 
          <!-- ================= Publish 跳转链 ================= -->
-         <!-- 欢迎 → 第 1 步说明 -->
-         <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="WslInfoDlg">1</Publish>
+         <!-- 欢迎:有旧版本 → 询问对话框;否则 → 第 1 步说明 -->
+         <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="OldVersionDlg">VPOT_OLD_FOUND</Publish>
+         <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="WslInfoDlg">NOT VPOT_OLD_FOUND</Publish>
          <Publish Dialog="WelcomeDlg" Control="Cancel" Event="EndDialog" Value="Exit">1</Publish>
+
+         <!-- 旧版本确认:卸载并继续(设 REMOVEOLD=1)/ 返回 / 取消退出 -->
+         <Publish Dialog="OldVersionDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
+         <Publish Dialog="OldVersionDlg" Control="Next" Event="SetProperty" Value="REMOVEOLD=1">1</Publish>
+         <Publish Dialog="OldVersionDlg" Control="Next" Event="NewDialog" Value="WslInfoDlg">1</Publish>
+         <Publish Dialog="OldVersionDlg" Control="Cancel" Event="EndDialog" Value="Exit">1</Publish>
 
          <!-- 第 1 步:WSL 说明 -->
          <Publish Dialog="WslInfoDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>

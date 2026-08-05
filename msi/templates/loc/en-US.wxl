@@ -25,6 +25,12 @@
   <String Id="WelcomeDlgTitle">VPOT Setup Wizard</String>
   <String Id="WelcomeDlgDescription">Welcome to the VPOT installer</String>
   <String Id="WelcomeDlgBody">This wizard will install VPOT on your computer.&#13;&#10;&#13;&#10;Click &quot;Next&quot; to continue.</String>
+
+  <!-- Upgrade detection -->
+  <String Id="OldVersionDlgTitle">Previous Version Detected</String>
+  <String Id="OldVersionDlgDescription">A previous version of VPOT is installed</String>
+  <String Id="OldVersionDlgBody">A previous version of VPOT was found on this computer.&#13;&#10;&#13;&#10;Click &quot;Uninstall &amp; Continue&quot; to uninstall the old version first, then install the new one;&#13;&#10;click &quot;Cancel&quot; to exit the installation.</String>
+  <String Id="OldVersionDlgNext">Uninstall &amp; Continue</String>
   <String Id="InstallDirDlgTitle">Choose Install Location</String>
   <String Id="InstallDirDlgDescription">Select the destination folder for VPOT</String>
   <String Id="InstallDirDlgFolderLabel">Default D:\vpot, editable:</String>
