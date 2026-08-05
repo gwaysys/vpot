@@ -21,3 +21,8 @@ docker/templates
 
 # 构建复制产物(picoclaw-docker 来源,勿提交)
 image-guide.png
+
+# go-msi 构建中间产物
+docker/go-msi
+docker/templates
+Binary/
