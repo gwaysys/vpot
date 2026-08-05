@@ -42,7 +42,6 @@ msi/
 ├── docker/               # 容器内构建脚本与镜像
 │   ├── Dockerfile        # wine32 + WiX 3.11 + wine-mono x86(无 go-msi)
 │   └── build.sh          # 容器内执行:sed 渲染 → candle → light
-├── build.ps1             # Windows 构建脚本(基于 go-msi,**已弃用**,见下)
 └── README.md
 ```
 
@@ -82,11 +81,6 @@ WIX_URL=<镜像> WINE_MONO_URL=<镜像> ./build-msi.sh
 > 说明:`candle.exe`/`light.exe` 是 32 位 .NET 程序,镜像使用 `wine32` +
 > `WINEARCH=win32` 纯 32 位 prefix + wine-mono x86;`-loc` 是 `light` 的
 > 参数,`!(loc.xxx)` 由 light 链接时展开。
-
-### Windows(弃用)
-
-`build.ps1` 为历史遗留(基于 go-msi + WixUIExtension,体积约 500KB),
-已不推荐;请使用上面的 Docker 构建方式产出 MSI。
 
 ## 安装
 
