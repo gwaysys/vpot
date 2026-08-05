@@ -95,10 +95,11 @@ powershell -ExecutionPolicy Bypass -File .\build.ps1 -Version 1.2.0
 
 ## 安装
 
-双击 MSI 以管理员权限安装(默认安装到 `C:\Program Files\lib10\VPOT`):
+双击 MSI 以管理员权限安装(默认安装到 `C:\Program Files\VPOT`):
 
 - 安装完成后自动弹出 VPOT 引导窗口执行四步流程(go-msi 的 install hook
-  固定排在 `InstallFiles` 之后执行,此时 `vpot-bootstrap.exe` 已落盘);
+  固定排在 `InstallFiles` 之后执行,经 `launch.ps1` 自愈脚本等待并启动
+  `vpot-bootstrap.exe`,避免安装时序/杀毒误删导致的"找不到文件");
 - 开始菜单生成 **VPOT** 快捷方式,可随时重新运行引导(环境修复/再次启动);
 - 数据目录默认在 **`我的文档\VPOT`**(`C:\Users\<用户名>\Documents\VPOT`,
   兼容 OneDrive 重定向),安装引导第 1 步可修改;选择结果保存在
@@ -120,6 +121,15 @@ uninstall hook 触发,排在 `InstallValidate` 之前、早于 `RemoveFiles`,
    引导通过 `wsl --unregister <发行版名>` 与 `optionalfeatures` 手工卸载。
 
 ## 注意事项
+
+- **Windows Defender 可能误删未签名的 `vpot-bootstrap.exe`**:安装时实时保护
+  可能将新落盘的未签名 exe 隔离/删除,导致安装钩子报"找不到文件"。
+  安装钩子已内置自愈(`msi/launch.ps1`):等待文件 → 缺失时提升添加
+  Defender 排除(`Add-MpPreference -ExclusionPath`)+ `msiexec /fa` 修复
+  重新提取 → 再启动;仍失败则静默,请从开始菜单 **VPOT** 重试。
+  若仍被拦截,请手动:Windows 安全中心 → 病毒和威胁防护 → 排除项 →
+  添加 `C:\Program Files\VPOT` 目录;长期建议对 `vpot-bootstrap.exe`
+  做代码签名(可显著降低误报)。
 
 - `docker-compose.yaml` 使用 `network_mode: "host"` 与镜像
   `docker.lib10.cn/library/vpot:v1.1.5`;Windows Docker Desktop 对 host 网络
