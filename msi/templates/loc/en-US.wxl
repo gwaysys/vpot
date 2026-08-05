@@ -19,4 +19,18 @@
   <String Id="ButtonText_Back">&lt; Back</String>
   <String Id="ButtonText_Next">Next &gt;</String>
   <String Id="ButtonText_Cancel">Cancel</String>
+  <String Id="ButtonText_Finish">Finish</String>
+
+  <!-- Standard dialogs -->
+  <String Id="WelcomeDlgTitle">VPOT Setup Wizard</String>
+  <String Id="WelcomeDlgDescription">Welcome to the VPOT installer</String>
+  <String Id="WelcomeDlgBody">This wizard will install VPOT on your computer.&#13;&#10;&#13;&#10;Click &quot;Next&quot; to continue.</String>
+  <String Id="InstallDirDlgTitle">Choose Install Location</String>
+  <String Id="InstallDirDlgDescription">Select the destination folder for VPOT</String>
+  <String Id="InstallDirDlgFolderLabel">Default D:\vpot, editable:</String>
+  <String Id="ProgressDlgTitle">Installing VPOT</String>
+  <String Id="ProgressDlgText">Please wait while files are being installed...</String>
+  <String Id="ExitDialogTitle">Installation Complete</String>
+  <String Id="ExitDialogDescription">VPOT was installed successfully</String>
+  <String Id="ExitDialogBody">Open the Start Menu and run &quot;VPOT&quot; (install-windows.cmd) to finish environment checks and container deployment.&#13;&#10;Visit https://127.0.0.1:18800 once the service is up.</String>
 </WixLocalization>

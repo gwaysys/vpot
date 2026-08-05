@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- VPOT 产品定义(纯 WiX,无 Go 模板、无 WixUIExtension/WixUtilExtension 依赖)。
-     @VERSION@ / @UPGRADE_CODE@ 由构建脚本 sed 渲染。
+     1.1.5 / 0364aa07-e538-4290-b1fb-fba6403c9e2e 由构建脚本 sed 渲染。
      默认安装目录 D:\vpot(可在 InstallDirDlg 中修改)。 -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
    <Product Id="BBBBBBBB-1111-2222-3333-444455556666"
-            UpgradeCode="@UPGRADE_CODE@"
+            UpgradeCode="0364aa07-e538-4290-b1fb-fba6403c9e2e"
             Name="VPOT"
-            Version="@VERSION@"
+            Version="1.1.5"
             Manufacturer="lib10"
             Language="1033" Codepage="65001">
 
       <Package InstallerVersion="200" Compressed="yes"
-               Description="VPOT @VERSION@"
+               Description="VPOT 1.1.5"
                Comments="VPOT" InstallScope="perMachine"/>
 
       <MediaTemplate EmbedCab="yes" CompressionLevel="high"/>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- VPOT 标准安装对话框:欢迎 / 安装目录 / 进度 / 完成。
+     全部手写,不依赖 WixUIExtension,体积最小化。
+     文本通过 !(loc.xxx) 从语言包(wxl)取值。 -->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+   <Fragment>
+      <UI>
+
+         <!-- 欢迎 -->
+         <Dialog Id="WelcomeDlg" Width="370" Height="270" Title="!(loc.WelcomeDlgTitle)" NoMinimize="yes">
+            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Next)" />
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)" />
+            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.WelcomeDlgTitle)" />
+            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.WelcomeDlgDescription)" />
+            <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="150" NoPrefix="yes" Text="!(loc.WelcomeDlgBody)" />
+         </Dialog>
+
+         <!-- 安装目录(可编辑路径,默认 D:\vpot) -->
+         <Dialog Id="InstallDirDlg" Width="370" Height="270" Title="!(loc.InstallDirDlgTitle)" NoMinimize="yes">
+            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Next)" />
+            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Back)" />
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)" />
+            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgTitle)" />
+            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgDescription)" />
+            <Control Id="FolderLabel" Type="Text" X="25" Y="70" Width="320" Height="15" NoPrefix="yes" Text="!(loc.InstallDirDlgFolderLabel)" />
+            <Control Id="Folder" Type="PathEdit" X="25" Y="90" Width="320" Height="18" Property="WIXUI_INSTALLDIR" Indirect="yes" />
+         </Dialog>
+
+         <!-- 安装进度 -->
+         <Dialog Id="ProgressDlg" Width="370" Height="270" Title="!(loc.ProgressDlgTitle)" NoMinimize="yes" Modeless="yes">
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)" />
+            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ProgressDlgTitle)" />
+            <Control Id="Text" Type="Text" X="25" Y="60" Width="320" Height="15" NoPrefix="yes" Text="!(loc.ProgressDlgText)" />
+            <Control Id="ProgressBar" Type="ProgressBar" X="25" Y="90" Width="320" Height="15" />
+         </Dialog>
+
+         <!-- 安装完成 -->
+         <Dialog Id="ExitDialog" Width="370" Height="270" Title="!(loc.ExitDialogTitle)" NoMinimize="yes">
+            <Control Id="Finish" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Finish)" />
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)" />
+            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogTitle)" />
+            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogDescription)" />
+            <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="150" NoPrefix="yes" Text="!(loc.ExitDialogBody)" />
+         </Dialog>
+
+         <!-- ================= Publish 跳转链 ================= -->
+         <!-- 欢迎 → 第 1 步说明 -->
+         <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="WslInfoDlg">1</Publish>
+         <Publish Dialog="WelcomeDlg" Control="Cancel" Event="EndDialog" Value="Exit">1</Publish>
+
+         <!-- 第 1 步:WSL 说明 -->
+         <Publish Dialog="WslInfoDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
+         <Publish Dialog="WslInfoDlg" Control="Next" Event="NewDialog" Value="DockerInfoDlg">1</Publish>
+         <Publish Dialog="WslInfoDlg" Control="Cancel" Event="EndDialog" Value="Exit">1</Publish>
+
+         <!-- 第 2 步:Docker 说明 -->
+         <Publish Dialog="DockerInfoDlg" Control="Back" Event="NewDialog" Value="WslInfoDlg">1</Publish>
+         <Publish Dialog="DockerInfoDlg" Control="Next" Event="NewDialog" Value="RunCmdInfoDlg">1</Publish>
+         <Publish Dialog="DockerInfoDlg" Control="Cancel" Event="EndDialog" Value="Exit">1</Publish>
+
+         <!-- 第 3 步:运行说明 → 目录选择 -->
+         <Publish Dialog="RunCmdInfoDlg" Control="Back" Event="NewDialog" Value="DockerInfoDlg">1</Publish>
+         <Publish Dialog="RunCmdInfoDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg">1</Publish>
+         <Publish Dialog="RunCmdInfoDlg" Control="Cancel" Event="EndDialog" Value="Exit">1</Publish>
+
+         <!-- 目录选择:确认路径 → 结束 UI 进入执行(进度对话框由 InstallUISequence 驱动) -->
+         <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="RunCmdInfoDlg">1</Publish>
+         <Publish Dialog="InstallDirDlg" Control="Next" Event="SetTargetPath" Value="WIXUI_INSTALLDIR">1</Publish>
+         <Publish Dialog="InstallDirDlg" Control="Next" Event="EndDialog" Value="Return">1</Publish>
+         <Publish Dialog="InstallDirDlg" Control="Cancel" Event="EndDialog" Value="Exit">1</Publish>
+
+      </UI>
+   </Fragment>
+</Wix>
