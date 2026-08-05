@@ -132,9 +132,9 @@
             <Control Id="OK" Type="PushButton" X="304" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_OK)"/>
             <Control Id="Cancel" Type="PushButton" X="236" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Cancel)"/>
             <Control Id="ComboLabel" Type="Text" X="25" Y="33" Width="110" Height="15" NoPrefix="yes" Text="!(loc.BrowseDlgComboLabel)"/>
-            <Control Id="DirectoryCombo" Type="DirectoryCombo" X="25" Y="48" Width="320" Height="192" Property="_BrowseProperty" Indirect="yes" Fixed="yes" Remote="yes"/>
+            <Control Id="DirectoryCombo" Type="DirectoryCombo" X="25" Y="48" Width="320" Height="192" Property="INSTALLDIR" Fixed="yes" Remote="yes"/>
             <Control Id="EditLabel" Type="Text" X="25" Y="86" Width="110" Height="15" NoPrefix="yes" Text="!(loc.BrowseDlgPathLabel)"/>
-            <Control Id="PathEdit" Type="PathEdit" X="25" Y="101" Width="320" Height="18" Property="_BrowseProperty" Indirect="yes"/>
+            <Control Id="PathEdit" Type="PathEdit" X="25" Y="101" Width="320" Height="18" Property="INSTALLDIR"/>
          </Dialog>
 
          <!-- 路径无效提示 -->
@@ -157,8 +157,8 @@
 
          <!-- 旧版本确认:卸载并继续(设 REMOVEOLD=1)/ 返回 / 取消退出 -->
          <Publish Dialog="OldVersionDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
-         <Publish Dialog="OldVersionDlg" Control="Next" Event="SetProperty" Value="REMOVEOLD=1">1</Publish>
-         <Publish Dialog="OldVersionDlg" Control="Next" Event="NewDialog" Value="WslInfoDlg">1</Publish>
+         <Publish Dialog="OldVersionDlg" Control="Next" Event="DoAction" Value="SetRemoveOldProps" Order="1">1</Publish>
+         <Publish Dialog="OldVersionDlg" Control="Next" Event="NewDialog" Value="WslInfoDlg" Order="2">1</Publish>
          <Publish Dialog="OldVersionDlg" Control="Cancel" Event="EndDialog" Value="Exit">1</Publish>
 
          <!-- 第 1 步:WSL 下载说明 -->
@@ -177,12 +177,10 @@
          <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="RunCmdInfoDlg">1</Publish>
          <!-- 安装:目录路径已由 PathEdit 直接写入 INSTALLDIR 属性,直接开始安装(不 SetTargetPath,避免 2707) -->
          <Publish Dialog="InstallDirDlg" Control="Next" Event="EndDialog" Value="Return">1</Publish>
-         <!-- 更改目录:把当前目录存入 _BrowseProperty,弹出浏览对话框 -->
-         <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
-         <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
-         <!-- 浏览对话框:确定 → 把所选路径写入 INSTALLDIR 属性并返回(不用 SetTargetPath,避免 2707) -->
-         <Publish Dialog="BrowseDlg" Control="OK" Event="SetProperty" Value="INSTALLDIR=[_BrowseProperty]" Order="1">1</Publish>
-         <Publish Dialog="BrowseDlg" Control="OK" Event="EndDialog" Value="Return" Order="2">1</Publish>
+         <!-- 更改目录:弹出浏览对话框(浏览控件直接绑定 INSTALLDIR 属性,选择即更新) -->
+         <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg">1</Publish>
+         <!-- 浏览对话框:确定 → 关闭返回(所选路径已在 INSTALLDIR 属性) -->
+         <Publish Dialog="BrowseDlg" Control="OK" Event="EndDialog" Value="Return">1</Publish>
          <Publish Dialog="BrowseDlg" Control="Cancel" Event="EndDialog" Value="Return">1</Publish>
 
          <!-- 确认页 -->
@@ -191,13 +189,14 @@
 
          <!-- 维护模式 -->
          <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
+         <!-- 维护模式:按钮先经 DoAction 用 VBScript 设属性(SetProperty 事件在此环境报 2812),再进确认页 -->
          <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
-         <Publish Dialog="MaintenanceTypeDlg" Control="ChangeButton" Event="SetProperty" Value="WIXUI_OP=Change">1</Publish>
-         <Publish Dialog="MaintenanceTypeDlg" Control="ChangeButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
-         <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="SetProperty" Value="REINSTALL=ALL REINSTALLMODE=omus">1</Publish>
-         <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
-         <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="SetProperty" Value="REMOVE=ALL">1</Publish>
-         <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+         <Publish Dialog="MaintenanceTypeDlg" Control="ChangeButton" Event="DoAction" Value="SetChangeProps" Order="1">1</Publish>
+         <Publish Dialog="MaintenanceTypeDlg" Control="ChangeButton" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
+         <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="DoAction" Value="SetRepairProps" Order="1">1</Publish>
+         <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
+         <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="DoAction" Value="SetRemoveProps" Order="1">1</Publish>
+         <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
       </UI>
 
    </Fragment>

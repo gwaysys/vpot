@@ -193,6 +193,11 @@
       <!-- 默认安装目录:D:\vpot(可被 InstallDirDlg 修改) -->
       <Property Id="INSTALLDIR" Value="D:\vpot" Secure="yes" />
 
+      <!-- 维护操作属性(Secure:UI 会话设置后传给执行会话) -->
+      <Property Id="WIXUI_OP" Secure="yes" />
+      <Property Id="REINSTALL" Secure="yes" />
+      <Property Id="REMOVE" Secure="yes" />
+
       <!-- 升级检测:检测到同 UpgradeCode 旧版本时置 VPOT_OLD_FOUND(仅检测,不自动移除);
            用户确认后设 REMOVEOLD=1 才执行卸载旧版 -->
       <Upgrade Id="{{.UpgradeCode}}">
@@ -231,6 +236,21 @@
       <CustomAction Id="DownloadDocker" Directory="TARGETDIR"
                     ExeCommand="rundll32.exe url.dll,FileProtocolHandler https://www.docker.com/products/docker-desktop/"
                     Execute="immediate" Impersonate="yes" Return="asyncNoWait" />
+
+      <!-- 维护/升级操作属性设置(VBScript 设 Session 属性;SetProperty 事件在此环境报 2812) -->
+      <CustomAction Id="SetChangeProps" Script="vbscript" Execute="immediate" Impersonate="no">
+        Session.Property("WIXUI_OP") = "Change"
+      </CustomAction>
+      <CustomAction Id="SetRepairProps" Script="vbscript" Execute="immediate" Impersonate="no">
+        Session.Property("REINSTALL") = "ALL"
+        Session.Property("REINSTALLMODE") = "omus"
+      </CustomAction>
+      <CustomAction Id="SetRemoveProps" Script="vbscript" Execute="immediate" Impersonate="no">
+        Session.Property("REMOVE") = "ALL"
+      </CustomAction>
+      <CustomAction Id="SetRemoveOldProps" Script="vbscript" Execute="immediate" Impersonate="no">
+        Session.Property("REMOVEOLD") = "1"
+      </CustomAction>
 
    </Product>
 
