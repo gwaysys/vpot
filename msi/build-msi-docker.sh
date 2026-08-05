@@ -5,16 +5,23 @@
 # 宿主机只需:docker、go、wget
 #
 # 用法:
-#   ./build-msi-docker.sh [版本号,默认 1.1.5]
+#   ./build-msi-docker.sh            # 一键生成双语 MSI(zh-CN + en-US,版本默认 1.1.5)
+#   ./build-msi-docker.sh 1.2.0      # 指定版本,仍生成双语 MSI
+#   ./build-msi-docker.sh 1.2.0 en-US# 只生成指定语言
 #
-# 产物: ./vpot-setup-<版本>.msi
+# 产物: ./vpot-setup-<版本>-<语言>.msi(zh-CN + en-US 两个)
 #
 # 网络较慢时可覆盖下载源(镜像构建阶段):
 #   WIX_URL=... WINE_MONO_URL=... ./build-msi-docker.sh
 set -euo pipefail
 
 VERSION="${1:-1.1.5}"
-CULTURE="${2:-zh-CN}"   # zh-CN / en-US
+# 默认一键生成双语;显式传第 2 个参数则只构建该语言
+if [ -n "${2:-}" ]; then
+    CULTURES=("$2")
+else
+    CULTURES=("zh-CN" "en-US")
+fi
 MSI_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$MSI_DIR/.." && pwd)"
 CTX="$MSI_DIR/docker"
@@ -99,16 +106,21 @@ cp -f "$MONO_MSI" "$CTX/wine-mono-x86.msi"
 step "构建镜像 $IMAGE(首次需下载 wine + WiX + wine-mono,耗时较长)"
 $DOCKER build -t "$IMAGE" "$CTX"
 
-# 4. 容器内编译
-step "容器内编译 -> vpot-setup-$VERSION-$CULTURE.msi"
-$DOCKER run --rm -e CULTURE="$CULTURE" -v "$MSI_DIR":/build "$IMAGE" "vpot-setup-$VERSION-$CULTURE.msi" "$VERSION"
+# 4. 容器内编译(每个 culture 一次;镜像已构建,直接复用)
+for CULTURE in "${CULTURES[@]}"; do
+    step "容器内编译 -> vpot-setup-$VERSION-$CULTURE.msi"
+    $DOCKER run --rm -e CULTURE="$CULTURE" -v "$MSI_DIR":/build "$IMAGE" "vpot-setup-$VERSION-$CULTURE.msi" "$VERSION"
 
-# 5. 修复产物属主(容器内以 root 写入,文件归 root 所有)
-if [ -f "$MSI_DIR/vpot-setup-$VERSION-$CULTURE.msi" ]; then
-    sudo chown "$(id -u):$(id -g)" "$MSI_DIR/vpot-setup-$VERSION-$CULTURE.msi" 2>/dev/null || true
-fi
+    # 5. 修复产物属主(容器内以 root 写入,文件归 root 所有)
+    if [ -f "$MSI_DIR/vpot-setup-$VERSION-$CULTURE.msi" ]; then
+        sudo chown "$(id -u):$(id -g)" "$MSI_DIR/vpot-setup-$VERSION-$CULTURE.msi" 2>/dev/null || true
+    fi
+done
 
 echo
 echo "=============================================="
-echo "  构建完成: $MSI_DIR/vpot-setup-$VERSION-$CULTURE.msi"
+echo "  构建完成:"
+for CULTURE in "${CULTURES[@]}"; do
+    echo "    - $MSI_DIR/vpot-setup-$VERSION-$CULTURE.msi"
+done
 echo "=============================================="

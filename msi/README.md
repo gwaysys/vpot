@@ -70,12 +70,13 @@ msi/
 无需在本机安装 wine/WiX,一切在容器内完成:
 
 ```sh
-./build-msi-docker.sh                 # 默认版本 1.1.5,culture zh-CN
-./build-msi-docker.sh 1.2.0           # 指定版本
-./build-msi-docker.sh 1.2.0 en-US     # 指定版本 + 语言(zh-CN / en-US)
+./build-msi-docker.sh                  # 一键生成双语 MSI(zh-CN + en-US,版本默认 1.1.5)
+./build-msi-docker.sh 1.2.0            # 指定版本,仍生成双语 MSI
+./build-msi-docker.sh 1.2.0 en-US      # 只生成指定语言
 ```
 
-产物:`vpot-setup-<版本>-<culture>.msi`(如 `vpot-setup-1.1.5-zh-CN.msi`)。
+产物:`vpot-setup-<版本>-<culture>.msi`(默认 `zh-CN` + `en-US` 两个,
+如 `vpot-setup-1.1.5-zh-CN.msi`、`vpot-setup-1.1.5-en-US.msi`)。
 
 流程:构建镜像(`msi/docker/Dockerfile`,内含 wine+wine32、WiX 3.11、
 wine-mono x86、go-msi)→ 容器内 `go-msi make` → wine 兼容修补:
