@@ -14,8 +14,7 @@
             Name="{{.Product}}"
             Version="{{.Version.MSI}}"
             Manufacturer="{{.Company}}"
-            Language="1033"
-            Codepage="65001">
+            Language="1033" Codepage="65001">
 
       <Package InstallerVersion="200" Compressed="yes" Description="{{.Product}} {{.Version.Display}}"
                Comments="This installs {{.Product}} {{.Version.Display}}" InstallScope="perMachine"/>
