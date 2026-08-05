@@ -20,7 +20,7 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources \
     && dpkg --add-architecture i386 \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-         wine wine32:i386 unzip ca-certificates xvfb \
+         wine wine32:i386 unzip ca-certificates xvfb xauth \
     && rm -rf /var/lib/apt/lists/*
 
 # 2) WiX 3.11(wix311-binaries.zip,免安装)
