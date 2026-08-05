@@ -21,7 +21,7 @@
          <!-- 欢迎页 -->
          <Dialog Id="WelcomeDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
             <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Next)"/>
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)"/>
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.WelcomeDlgTitle)"/>
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.WelcomeDlgDescription)"/>
             <Control Id="Body" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.WelcomeDlgBody)"/>
@@ -29,9 +29,9 @@
 
          <!-- 安装目录选择(默认 D:\vpot,可编辑) -->
          <Dialog Id="InstallDirDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
-            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Next)"/>
+            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Install)"/>
             <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Back)"/>
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)"/>
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgTitle)"/>
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgDescription)"/>
             <Control Id="FolderLabel" Type="Text" X="25" Y="70" Width="320" Height="15" NoPrefix="yes" Text="!(loc.InstallDirDlgFolderLabel)"/>
@@ -42,7 +42,7 @@
          <!-- 安装确认(安装/修复/移除/更改共用,按模式显示) -->
          <Dialog Id="VerifyReadyDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
             <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Back)"/>
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)"/>
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
             <Control Id="Install" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Install)">
                <Publish Event="EndDialog" Value="Return">1</Publish>
                <Condition Action="show">NOT Installed</Condition>
@@ -77,18 +77,18 @@
 
          <!-- 安装进度 -->
          <Dialog Id="ProgressDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes" Modeless="yes">
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)"/>
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ProgressDlgTitle)"/>
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ProgressDlgDescription)"/>
             <Control Id="Text" Type="Text" X="25" Y="60" Width="320" Height="15" Text="!(loc.ProgressDlgText)"/>
-            <Control Id="ProgressBar" Type="ProgressBar" X="25" Y="85" Width="320" Height="15"/>
+            <Control Id="ProgressBar" Type="ProgressBar" X="25" Y="85" Width="320" Height="15" Text="ProgressDone"/>
             <Control Id="ActionText" Type="Text" X="25" Y="115" Width="320" Height="15" Text="[Progress1]"/>
          </Dialog>
 
          <!-- 完成 -->
          <Dialog Id="ExitDialog" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
             <Control Id="Finish" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Finish)"/>
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)"/>
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogTitle)"/>
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogDescription)"/>
             <Control Id="Body" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.ExitDialogBody)"/>
@@ -97,7 +97,7 @@
          <!-- 维护模式欢迎(重跑 MSI) -->
          <Dialog Id="MaintenanceWelcomeDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
             <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Next)"/>
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)"/>
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.MaintenanceWelcomeDlgTitle)"/>
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.MaintenanceWelcomeDlgDescription)"/>
             <Control Id="Body" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.MaintenanceWelcomeDlgBody)"/>
@@ -106,7 +106,7 @@
          <!-- 维护模式操作选择(更改/修复/移除) -->
          <Dialog Id="MaintenanceTypeDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
             <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Back)"/>
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)"/>
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.MaintenanceTypeDlgTitle)"/>
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.MaintenanceTypeDlgDescription)"/>
             <Control Id="ChangeButton" Type="PushButton" X="25" Y="70" Width="320" Height="32" Text="!(loc.MaintenanceTypeDlgChangeButton)"/>
@@ -128,7 +128,7 @@
          <!-- 目录浏览(更改安装目录) -->
          <Dialog Id="BrowseDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
             <Control Id="OK" Type="PushButton" X="304" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_OK)"/>
-            <Control Id="Cancel" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)"/>
+            <Control Id="Cancel" Type="PushButton" X="236" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Cancel)"/>
             <Control Id="ComboLabel" Type="Text" X="25" Y="33" Width="110" Height="15" NoPrefix="yes" Text="!(loc.BrowseDlgComboLabel)"/>
             <Control Id="DirectoryCombo" Type="DirectoryCombo" X="25" Y="48" Width="320" Height="192" Property="_BrowseProperty" Indirect="yes" Fixed="yes" Remote="yes"/>
             <Control Id="EditLabel" Type="Text" X="25" Y="86" Width="110" Height="15" NoPrefix="yes" Text="!(loc.BrowseDlgPathLabel)"/>
@@ -173,8 +173,9 @@
 
          <!-- 目录选择 -->
          <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="RunCmdInfoDlg">1</Publish>
+         <!-- 安装:应用目录后直接开始安装(跳过确认页) -->
          <Publish Dialog="InstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
-         <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
+         <Publish Dialog="InstallDirDlg" Control="Next" Event="EndDialog" Value="Return" Order="2">1</Publish>
          <!-- 更改目录:把当前目录存入 _BrowseProperty,弹出浏览对话框 -->
          <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
          <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>

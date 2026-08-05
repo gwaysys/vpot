@@ -10,11 +10,11 @@
             <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[WixUIBannerBmp]" />
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.OldVersionDlgTitle)" />
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.OldVersionDlgDescription)" />
-            <Control Id="BodyText" Type="ScrollableText" X="25" Y="60" Width="320" Height="160" Sunken="yes" TabSkip="no"
+            <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="160"
                      Text="$(loc.OldVersionDlgBody)" />
             <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="$(loc.OldVersionDlgNext)" />
-            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="[ButtonText_Back]" />
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="[ButtonText_Cancel]" />
+            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Back)" />
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
          </Dialog>
 
          <!-- 第 1 步:WSL 下载说明(官方 + lib10 两个链接) -->
@@ -22,11 +22,11 @@
             <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[WixUIBannerBmp]" />
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.WslInfoDlgTitle)" />
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.WslInfoDlgDescription)" />
-            <Control Id="BodyText" Type="ScrollableText" X="25" Y="60" Width="320" Height="160" Sunken="yes" TabSkip="no"
+            <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="160"
                      Text="$(loc.WslInfoDlgBody)" />
             <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Back)" />
             <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="$(loc.ButtonText_Next)" />
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="$(loc.ButtonText_Cancel)" />
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
          </Dialog>
 
          <!-- 第 2 步:Docker 下载说明 -->
@@ -34,11 +34,11 @@
             <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[WixUIBannerBmp]" />
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.DockerInfoDlgTitle)" />
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.DockerInfoDlgDescription)" />
-            <Control Id="BodyText" Type="ScrollableText" X="25" Y="60" Width="320" Height="160" Sunken="yes" TabSkip="no"
+            <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="160"
                      Text="$(loc.DockerInfoDlgBody)" />
             <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Back)" />
             <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="$(loc.ButtonText_Next)" />
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="$(loc.ButtonText_Cancel)" />
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
          </Dialog>
 
          <!-- 第 3 步:手动运行 install-windows.cmd 说明 -->
@@ -46,11 +46,11 @@
             <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[WixUIBannerBmp]" />
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.RunCmdInfoDlgTitle)" />
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.RunCmdInfoDlgDescription)" />
-            <Control Id="BodyText" Type="ScrollableText" X="25" Y="60" Width="320" Height="160" Sunken="yes" TabSkip="no"
+            <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="160"
                      Text="$(loc.RunCmdInfoDlgBody)" />
             <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Back)" />
             <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="$(loc.ButtonText_Next)" />
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="$(loc.ButtonText_Cancel)" />
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
          </Dialog>
 
       </UI>
