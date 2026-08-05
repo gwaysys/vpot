@@ -67,4 +67,7 @@
   <String Id="BrowseDlgComboLabel">Look in:</String>
   <String Id="BrowseDlgPathLabel">Folder name:</String>
   <String Id="InvalidDirDlgText">The path you entered is invalid. Please enter a valid installation path.</String>
+  <String Id="WslInfoDlgBtnInstall">Run wsl --install</String>
+  <String Id="WslInfoDlgBtnDownload">Download WSL installer</String>
+  <String Id="DockerInfoDlgBtnDownload">Download Docker Desktop</String>
 </WixLocalization>

@@ -127,6 +127,14 @@
             <Control Id="Text" Type="Text" X="35" Y="20" Width="210" Height="20" Text="!(loc.CancelDlgText)"/>
          </Dialog>
 
+         <!-- 错误提示(ErrorDialog 属性引用) -->
+         <Dialog Id="ErrorDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
+            <Control Id="OK" Type="PushButton" X="304" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_OK)">
+               <Publish Event="EndDialog" Value="Return">1</Publish>
+            </Control>
+            <Control Id="ErrorText" Type="Text" X="25" Y="30" Width="320" Height="180" TabSkip="no" Text="[Error1]"/>
+         </Dialog>
+
          <!-- 目录浏览(更改安装目录) -->
          <Dialog Id="BrowseDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
             <Control Id="OK" Type="PushButton" X="304" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_OK)"/>

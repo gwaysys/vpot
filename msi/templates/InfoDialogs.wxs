@@ -7,7 +7,6 @@
 
          <!-- 检测到旧版本(仅 VPOT_OLD_FOUND 时由 Welcome 分支进入) -->
          <Dialog Id="OldVersionDlg" Width="370" Height="270" Title="$(loc.OldVersionDlgTitle)" NoMinimize="yes">
-            <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[WixUIBannerBmp]" />
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.OldVersionDlgTitle)" />
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.OldVersionDlgDescription)" />
             <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="160"
@@ -19,11 +18,18 @@
 
          <!-- 第 1 步:WSL 下载说明(官方 + lib10 两个链接) -->
          <Dialog Id="WslInfoDlg" Width="370" Height="270" Title="$(loc.WslInfoDlgTitle)" NoMinimize="yes">
-            <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[WixUIBannerBmp]" />
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.WslInfoDlgTitle)" />
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.WslInfoDlgDescription)" />
-            <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="160"
+            <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="120"
                      Text="$(loc.WslInfoDlgBody)" />
+            <Control Id="BtnWslInstall" Type="PushButton" X="25" Y="190" Width="150" Height="22" Text="$(loc.WslInfoDlgBtnInstall)">
+               <Publish Event="SetProperty" Value="WixShellExecTarget=powershell.exe -NoExit -Command &quot;wsl --install&quot;">1</Publish>
+               <Publish Event="DoAction" Value="ExecShell">1</Publish>
+            </Control>
+            <Control Id="BtnWslDownload" Type="PushButton" X="185" Y="190" Width="160" Height="22" Text="$(loc.WslInfoDlgBtnDownload)">
+               <Publish Event="SetProperty" Value="WixShellExecTarget=rundll32.exe url.dll,FileProtocolHandler https://lib10.cn/download/wsl.2.7.11.0.x64.msi">1</Publish>
+               <Publish Event="DoAction" Value="ExecShell">1</Publish>
+            </Control>
             <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Back)" />
             <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="$(loc.ButtonText_Next)" />
             <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
@@ -31,11 +37,14 @@
 
          <!-- 第 2 步:Docker 下载说明 -->
          <Dialog Id="DockerInfoDlg" Width="370" Height="270" Title="$(loc.DockerInfoDlgTitle)" NoMinimize="yes">
-            <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[WixUIBannerBmp]" />
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.DockerInfoDlgTitle)" />
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.DockerInfoDlgDescription)" />
-            <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="160"
+            <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="120"
                      Text="$(loc.DockerInfoDlgBody)" />
+            <Control Id="BtnDockerDownload" Type="PushButton" X="25" Y="190" Width="200" Height="22" Text="$(loc.DockerInfoDlgBtnDownload)">
+               <Publish Event="SetProperty" Value="WixShellExecTarget=rundll32.exe url.dll,FileProtocolHandler https://www.docker.com/products/docker-desktop/">1</Publish>
+               <Publish Event="DoAction" Value="ExecShell">1</Publish>
+            </Control>
             <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Back)" />
             <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="$(loc.ButtonText_Next)" />
             <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
@@ -43,7 +52,6 @@
 
          <!-- 第 3 步:手动运行 install-windows.cmd 说明 -->
          <Dialog Id="RunCmdInfoDlg" Width="370" Height="270" Title="$(loc.RunCmdInfoDlgTitle)" NoMinimize="yes">
-            <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[WixUIBannerBmp]" />
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.RunCmdInfoDlgTitle)" />
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.RunCmdInfoDlgDescription)" />
             <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="160"

@@ -67,4 +67,7 @@
   <String Id="BrowseDlgComboLabel">查找范围:</String>
   <String Id="BrowseDlgPathLabel">文件夹名:</String>
   <String Id="InvalidDirDlgText">输入的路径无效,请输入有效的安装路径。</String>
+  <String Id="WslInfoDlgBtnInstall">执行 wsl --install</String>
+  <String Id="WslInfoDlgBtnDownload">下载 WSL 安装包</String>
+  <String Id="DockerInfoDlgBtnDownload">下载 Docker Desktop</String>
 </WixLocalization>
