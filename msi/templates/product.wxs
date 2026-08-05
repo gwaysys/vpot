@@ -1,12 +1,5 @@
 <?xml version="1.0"?>
 
-<?if $(sys.BUILDARCH)="x86"?>
-    <?define Program_Files="ProgramFilesFolder"?>
-<?elseif $(sys.BUILDARCH)="x64"?>
-    <?define Program_Files="ProgramFiles64Folder"?>
-<?else?>
-    <?error Unsupported value of sys.BUILDARCH=$(sys.BUILDARCH)?>
-<?endif?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
@@ -48,11 +41,10 @@
 
       <Directory Id="TARGETDIR" Name="SourceDir">
 
-        <Directory Id="$(var.Program_Files)">
-            <Directory Id="INSTALLDIR" Name="{{.Product}}">
+        <Directory Id="INSTALLDIR" Name="vpot">
                 {{define "FILES"}}
                 {{range $f := .}}
-                <Component Id="ApplicationFiles{{$f.ID}}" Guid="*">
+                <Component Id="ApplicationFiles{{$f.ID}}" Guid="{{if eq $f.ID 1}}CCCCCCCC-0000-0000-0000-000000000001{{else if eq $f.ID 2}}CCCCCCCC-0000-0000-0000-000000000002{{else if eq $f.ID 3}}CCCCCCCC-0000-0000-0000-000000000003{{else if eq $f.ID 4}}CCCCCCCC-0000-0000-0000-000000000004{{else}}CCCCCCCC-0000-0000-0000-000000000099{{end}}">
                     <File Id="ApplicationFile{{$f.ID}}" Source="{{$f.Path}}"/>
                     {{if $f.Service}}
                     <ServiceInstall Id="ServiceInstall{{$f.ID}}" Type="ownProcess" Name="{{$f.Service.Name}}" Start="{{$f.Service.Start}}" Account="LocalSystem" ErrorControl="normal"
@@ -82,7 +74,6 @@
                 {{end}}
                 {{template "DIRECTORIES" .Directory.Directories}}
             </Directory>
-        </Directory>
 
         {{range $i, $e := .Environments}}
         <Component Id="Environments{{$i}}" Guid="*">
@@ -102,7 +93,7 @@
             {{if gt ($r.Condition | len) 0}}<Condition><![CDATA[{{$r.Condition}}]]></Condition>{{end}}
         </Component>
         {{end}}
-        <Component Id="RegistryEntriesARP" Guid="*">
+        <Component Id="RegistryEntriesARP" Guid="CCCCCCCC-0000-0000-0000-000000000010">
             <RegistryKey Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]">
                 <RegistryValue Type="string" Name="AuthorizedCDFPrefix" Value=""/>
                 <RegistryValue Type="string" Name="Comments" Value="{{.Info.Comments}}"/>
@@ -133,7 +124,7 @@
         <Directory Id="DesktopFolder"/>
 
         {{range $i, $s := .Shortcuts}}
-        <Component Id="ApplicationShortcuts{{$i}}" Guid="*">
+        <Component Id="ApplicationShortcuts{{$i}}" Guid="{{if eq $i 0}}CCCCCCCC-0000-0000-0000-000000000020{{else}}CCCCCCCC-0000-0000-0000-000000000021{{end}}">
             <Shortcut Id="ApplicationShortcut{{$i}}" Name="{{$s.Name}}" Description="{{$s.Description}}" Target="{{$s.Target}}" WorkingDirectory="{{$s.WDir}}"
                 Directory={{if eq $s.Location "program"}}"ProgramMenuFolder"{{else}}"DesktopFolder"{{end}}
                 {{if gt ($s.Arguments | len) 0}}Arguments="{{$s.Arguments}}"{{end}}>
@@ -199,6 +190,9 @@
       </UI>
 
       <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+
+      <!-- 默认安装目录:D:\vpot(可被 InstallDirDlg 修改) -->
+      <Property Id="INSTALLDIR" Value="D:\vpot" Secure="yes" />
 
       <!-- 升级检测:检测到同 UpgradeCode 旧版本时置 VPOT_OLD_FOUND(仅检测,不自动移除);
            用户确认后设 REMOVEOLD=1 才执行卸载旧版 -->
