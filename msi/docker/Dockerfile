@@ -37,7 +37,9 @@ COPY go-msi /usr/local/bin/go-msi
 COPY templates /usr/local/bin/templates
 
 # 5) cmd.exe wrapper(go-msi 内部执行 cmd.exe /C build.bat)
-RUN printf '#!/bin/sh\nexec wine cmd.exe "$@"\n' > /usr/local/bin/cmd.exe \
+# 导出 PATH 含 /opt/wix:wine 会把 Linux PATH 映射为 Windows Z: 风格,
+# 使 build.bat 中的裸命令 candle/light 可命中(注册表 PATH 不生效)。
+RUN printf '#!/bin/sh\nexport WINEDEBUG=-all\nexport PATH="/opt/wix:$PATH"\nexec wine cmd.exe "$@"\n' > /usr/local/bin/cmd.exe \
     && chmod +x /usr/local/bin/cmd.exe
 
 # 6) 初始化 32 位 wine prefix + 安装 wine-mono
