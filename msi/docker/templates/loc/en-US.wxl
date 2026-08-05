@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WixLocalization Culture="en-US" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <!-- Step 1: WSL info -->
+  <String Id="WslInfoDlgTitle">Step 1 / 3: Install WSL</String>
+  <String Id="WslInfoDlgDescription">WSL is required. Please download and install it first.</String>
+  <String Id="WslInfoDlgBody">VPOT requires WSL (Windows Subsystem for Linux).&#13;&#10;&#13;&#10;Download and install WSL from either of the following addresses:&#13;&#10;&#13;&#10;1. Official:&#13;&#10;   https://aka.ms/wsl&#13;&#10;&#13;&#10;2. Mirror (recommended in CN):&#13;&#10;   https://lib10.cn/download/wsl.2.7.11.0.x64.msi&#13;&#10;&#13;&#10;After installation, reboot if prompted, then continue.</String>
+
+  <!-- Step 2: Docker info -->
+  <String Id="DockerInfoDlgTitle">Step 2 / 3: Install Docker</String>
+  <String Id="DockerInfoDlgDescription">Please download and install Docker Desktop.</String>
+  <String Id="DockerInfoDlgBody">Download and install Docker Desktop from the official website:&#13;&#10;&#13;&#10;   https://www.docker.com/products/docker-desktop/&#13;&#10;&#13;&#10;After installation, log out and back in, or reboot if prompted, then continue.</String>
+
+  <!-- Step 3: Run wizard manually -->
+  <String Id="RunCmdInfoDlgTitle">Step 3 / 3: Run the setup wizard</String>
+  <String Id="RunCmdInfoDlgDescription">After installation, run the setup wizard manually.</String>
+  <String Id="RunCmdInfoDlgBody">Once all dependencies are ready, run the setup wizard to finish the deployment:&#13;&#10;&#13;&#10;1. Open the Start Menu and run &quot;VPOT&quot; (install-windows.cmd);&#13;&#10;2. The script detects WSL and Docker, guides the downloads and starts the service;&#13;&#10;3. Open https://127.0.0.1:18800 in your browser once the service is up.&#13;&#10;&#13;&#10;Click &quot;Next&quot; to start installing files.</String>
+
+  <!-- Buttons -->
+  <String Id="ButtonText_Back">&lt; Back</String>
+  <String Id="ButtonText_Next">Next &gt;</String>
+  <String Id="ButtonText_Cancel">Cancel</String>
+  <String Id="ButtonText_Finish">Finish</String>
+
+  <!-- Standard dialogs -->
+  <String Id="WelcomeDlgTitle">VPOT Setup Wizard</String>
+  <String Id="WelcomeDlgDescription">Welcome to the VPOT installer</String>
+  <String Id="WelcomeDlgBody">This wizard will install VPOT on your computer.&#13;&#10;&#13;&#10;Click &quot;Next&quot; to continue.</String>
+
+  <!-- Upgrade detection -->
+  <String Id="OldVersionDlgTitle">Previous Version Detected</String>
+  <String Id="OldVersionDlgDescription">A previous version of VPOT is installed</String>
+  <String Id="OldVersionDlgBody">A previous version of VPOT was found on this computer.&#13;&#10;&#13;&#10;Click &quot;Uninstall &amp; Continue&quot; to uninstall the old version first, then install the new one;&#13;&#10;click &quot;Cancel&quot; to exit the installation.</String>
+  <String Id="OldVersionDlgNext">Uninstall &amp; Continue</String>
+  <String Id="InstallDirDlgTitle">Choose Install Location</String>
+  <String Id="InstallDirDlgDescription">Select the destination folder for VPOT</String>
+  <String Id="InstallDirDlgFolderLabel">Default D:\vpot, editable:</String>
+  <String Id="ProgressDlgTitle">Installing VPOT</String>
+  <String Id="ProgressDlgText">Please wait while files are being installed...</String>
+  <String Id="ExitDialogTitle">Installation Complete</String>
+  <String Id="ExitDialogDescription">VPOT was installed successfully</String>
+  <String Id="ExitDialogBody">Open the Start Menu and run &quot;VPOT&quot; (install-windows.cmd) to finish environment checks and container deployment.&#13;&#10;Visit https://127.0.0.1:18800 once the service is up.</String>
+</WixLocalization>

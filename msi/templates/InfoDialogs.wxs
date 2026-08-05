@@ -1,41 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- VPOT 说明对话框:安装前向用户展示 WSL/Docker 下载链接与手动运行说明。
-     文本全部通过 !(loc.xxx) 从语言包(wxl)取值,支持国际化。 -->
+     文本全部通过 $(loc.xxx) 从语言包(wxl)取值,支持国际化。 -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
    <Fragment>
       <UI>
 
-         <!-- 第 1 步:WSL 下载说明(官方 + lib10 两个链接) -->
-         <Dialog Id="WslInfoDlg" Width="370" Height="270" Title="!(loc.WslInfoDlgTitle)" NoMinimize="yes">
-            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.WslInfoDlgTitle)" />
-            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.WslInfoDlgDescription)" />
+         <!-- 检测到旧版本(仅 VPOT_OLD_FOUND 时由 Welcome 分支进入) -->
+         <Dialog Id="OldVersionDlg" Width="370" Height="270" Title="$(loc.OldVersionDlgTitle)" NoMinimize="yes">
+            <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[WixUIBannerBmp]" />
+            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.OldVersionDlgTitle)" />
+            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.OldVersionDlgDescription)" />
             <Control Id="BodyText" Type="ScrollableText" X="25" Y="60" Width="320" Height="160" Sunken="yes" TabSkip="no"
-                     Text="!(loc.WslInfoDlgBody)" />
-            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Back)" />
-            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Next)" />
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)" />
+                     Text="$(loc.OldVersionDlgBody)" />
+            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="$(loc.OldVersionDlgNext)" />
+            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="[ButtonText_Back]" />
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="[ButtonText_Cancel]" />
+         </Dialog>
+
+         <!-- 第 1 步:WSL 下载说明(官方 + lib10 两个链接) -->
+         <Dialog Id="WslInfoDlg" Width="370" Height="270" Title="$(loc.WslInfoDlgTitle)" NoMinimize="yes">
+            <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[WixUIBannerBmp]" />
+            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.WslInfoDlgTitle)" />
+            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.WslInfoDlgDescription)" />
+            <Control Id="BodyText" Type="ScrollableText" X="25" Y="60" Width="320" Height="160" Sunken="yes" TabSkip="no"
+                     Text="$(loc.WslInfoDlgBody)" />
+            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Back)" />
+            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="$(loc.ButtonText_Next)" />
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="$(loc.ButtonText_Cancel)" />
          </Dialog>
 
          <!-- 第 2 步:Docker 下载说明 -->
-         <Dialog Id="DockerInfoDlg" Width="370" Height="270" Title="!(loc.DockerInfoDlgTitle)" NoMinimize="yes">
-            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.DockerInfoDlgTitle)" />
-            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.DockerInfoDlgDescription)" />
+         <Dialog Id="DockerInfoDlg" Width="370" Height="270" Title="$(loc.DockerInfoDlgTitle)" NoMinimize="yes">
+            <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[WixUIBannerBmp]" />
+            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.DockerInfoDlgTitle)" />
+            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.DockerInfoDlgDescription)" />
             <Control Id="BodyText" Type="ScrollableText" X="25" Y="60" Width="320" Height="160" Sunken="yes" TabSkip="no"
-                     Text="!(loc.DockerInfoDlgBody)" />
-            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Back)" />
-            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Next)" />
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)" />
+                     Text="$(loc.DockerInfoDlgBody)" />
+            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Back)" />
+            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="$(loc.ButtonText_Next)" />
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="$(loc.ButtonText_Cancel)" />
          </Dialog>
 
          <!-- 第 3 步:手动运行 install-windows.cmd 说明 -->
-         <Dialog Id="RunCmdInfoDlg" Width="370" Height="270" Title="!(loc.RunCmdInfoDlgTitle)" NoMinimize="yes">
-            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.RunCmdInfoDlgTitle)" />
-            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.RunCmdInfoDlgDescription)" />
+         <Dialog Id="RunCmdInfoDlg" Width="370" Height="270" Title="$(loc.RunCmdInfoDlgTitle)" NoMinimize="yes">
+            <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[WixUIBannerBmp]" />
+            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.RunCmdInfoDlgTitle)" />
+            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.RunCmdInfoDlgDescription)" />
             <Control Id="BodyText" Type="ScrollableText" X="25" Y="60" Width="320" Height="160" Sunken="yes" TabSkip="no"
-                     Text="!(loc.RunCmdInfoDlgBody)" />
-            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Back)" />
-            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Next)" />
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.ButtonText_Cancel)" />
+                     Text="$(loc.RunCmdInfoDlgBody)" />
+            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Back)" />
+            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="$(loc.ButtonText_Next)" />
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="$(loc.ButtonText_Cancel)" />
          </Dialog>
 
       </UI>

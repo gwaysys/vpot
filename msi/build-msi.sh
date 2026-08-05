@@ -39,6 +39,15 @@ if docker info >/dev/null 2>&1; then
 fi
 $DOCKER info >/dev/null 2>&1 || die "docker daemon 不可用,请先启动 Docker 服务(sudo systemctl start docker)"
 command -v wget >/dev/null 2>&1 || die "未找到 wget,请先安装(如: sudo apt install wget)"
+command -v go >/dev/null 2>&1 || die "未找到 go,请先安装 Go 工具链"
+
+# go-msi 二进制:未安装则自动安装
+GO_MSI="$(go env GOPATH)/bin/go-msi"
+if [ ! -x "$GO_MSI" ]; then
+    echo "go-msi 未安装,自动安装..."
+    go install github.com/mat007/go-msi@latest
+    [ -x "$GO_MSI" ] || die "go-msi 安装失败"
+fi
 
 # 1. 准备打包文件(install-windows.cmd / docker-compose.yaml / readme.txt)
 step "准备打包文件"
@@ -46,9 +55,14 @@ cp -f "$REPO_ROOT/picoclaw-docker/install-windows.cmd" "$MSI_DIR/"
 cp -f "$REPO_ROOT/picoclaw-docker/docker-compose.yaml" "$MSI_DIR/"
 cp -f "$REPO_ROOT/picoclaw-docker/readme.txt" "$MSI_DIR/"
 
-# 2. 准备构建上下文(WiX + wine-mono 安装包,Dockerfile 直接 COPY)
+# 2. 准备构建上下文(go-msi 二进制 + 模板 + WiX + wine-mono,Dockerfile 直接 COPY)
 step "准备构建上下文"
 mkdir -p "$CTX"
+
+cp -f "$GO_MSI" "$CTX/go-msi"
+rm -rf "$CTX/templates"
+cp -r "$MSI_DIR/templates" "$CTX/templates"
+chmod -R u+w "$CTX/templates"
 
 # WiX 3.11 zip 与 wine-mono:优先复用本地缓存(~/.cache/vpot-wix/),
 # 没有才下载并写入缓存(下次编译直接复用,勿手动清理缓存)

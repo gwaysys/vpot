@@ -37,10 +37,31 @@ RUN mkdir -p /opt/wix \
 # 3) wine-mono x86(32 位 .NET 运行时,candle/light 依赖)
 COPY wine-mono-x86.msi /opt/wine-mono-x86.msi
 
-# 4) 初始化 32 位 wine prefix + 安装 wine-mono
+# 4) go-msi 二进制 + 模板(由宿主机脚本 build-msi.sh 注入构建上下文)
+COPY go-msi /usr/local/bin/go-msi
+COPY templates /usr/local/bin/templates
+
+# 5) cmd.exe wrapper(go-msi 内部执行 cmd.exe /C build.bat)
+# 导出 PATH 含 /opt/wix:wine 会把 Linux PATH 映射为 Windows Z: 风格,
+# 使 build.bat 中的裸命令 candle/light 可命中(注册表 PATH 不生效)。
+RUN printf '#!/bin/sh\nexport WINEDEBUG=-all\nexport PATH="/opt/wix:$PATH"\nexec wine cmd.exe "$@"\n' > /usr/local/bin/cmd.exe \
+    && chmod +x /usr/local/bin/cmd.exe
+
+# 6) 初始化 32 位 wine prefix + 安装 wine-mono
 ENV WINEDEBUG=-all WINEARCH=win32 WINEPREFIX=/root/.wine32
 RUN xvfb-run -a wineboot -u || true \
     && xvfb-run -a wine msiexec /i /opt/wine-mono-x86.msi /quiet || true
+
+# 7) 把 WiX 全部文件复制进 wine 的 C:\windows\system32(默认 %PATH% 首项)。
+#    go-msi 生成的 build.bat 用裸命令 candle/light 查找(wine cmd 不采用
+#    Linux PATH 注入与注册表 PATH),复制到 system32 后必然命中;
+#    WixUIExtension.dll 等扩展 dll 与 light.exe 同目录,-ext 可正常加载。
+RUN cp -r /opt/wix/* /root/.wine32/drive_c/windows/system32/
+
+# 8) Windows PATH 加入 Z:\opt\wix(双保险;实际依赖第 7 步的 system32 复制)
+RUN xvfb-run -a wine reg add 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment' \
+        /v Path /t REG_EXPAND_SZ \
+        /d 'C:\windows\system32;C:\windows;Z:\opt\wix' /f || true
 
 WORKDIR /build
 ENTRYPOINT ["/build/docker/build.sh"]
