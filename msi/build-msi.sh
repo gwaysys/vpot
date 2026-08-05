@@ -109,12 +109,16 @@ EOF
 chmod +x "$BIN_DIR/cmd.exe"
 export PATH="$BIN_DIR:$PATH"
 
-# ---------- 6. go-msi + 模板(go install 不带模板,从 module cache 取) ----------
+# ---------- 6. go-msi + 模板(优先仓库模板,回退 module cache) ----------
 if [ ! -x "$GO_MSI" ]; then
     step "安装 go-msi"
     go install github.com/mat007/go-msi@latest
 fi
-if [ ! -d "$GO_BIN/templates" ]; then
+if [ -d "$MSI_DIR/templates" ]; then
+    step "使用仓库模板(msi/templates/,含 Codepage=65001 修复)"
+    rm -rf "$GO_BIN/templates"
+    cp -r "$MSI_DIR/templates" "$GO_BIN/"
+elif [ ! -d "$GO_BIN/templates" ]; then
     step "准备 go-msi 模板"
     GO_MSI_SRC="$(ls -d "$(go env GOMODCACHE)/github.com/mat007/go-msi@*" 2>/dev/null | head -1 || true)"
     [ -n "$GO_MSI_SRC" ] || die "未找到 go-msi 源码(module cache),请先执行: go install github.com/mat007/go-msi@latest"

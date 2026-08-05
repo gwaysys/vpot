@@ -26,6 +26,14 @@ Copy-Item -Force ..\picoclaw-docker\docker-compose.yaml .
 Copy-Item -Force ..\picoclaw-docker\readme.txt .
 
 Write-Host "==> 3/3 生成 MSI"
+# 优先使用仓库模板(msi/templates/,含 Codepage=65001 修复),复制到 go-msi 模板目录
+$GoBin = Join-Path (go env GOPATH) "bin"
+$TemplatesSrc = Join-Path $PSScriptRoot "templates"
+if (Test-Path $TemplatesSrc) {
+    $TemplatesDst = Join-Path $GoBin "templates"
+    if (Test-Path $TemplatesDst) { Remove-Item -Recurse -Force $TemplatesDst }
+    Copy-Item -Recurse -Force $TemplatesSrc $TemplatesDst
+}
 if (-not $MsiName) { $MsiName = "vpot-setup-$Version.msi" }
 go-msi make --msi $MsiName --version $Version --arch amd64 --path wix.json
 if ($LASTEXITCODE -ne 0) { throw "go-msi make 失败" }

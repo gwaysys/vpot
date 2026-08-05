@@ -17,14 +17,26 @@ msi/
 │   ├── go.mod
 │   ├── main.go           # 四步引导逻辑(与 install-windows.cmd 对应)
 │   └── console_windows.go# Windows 控制台 UTF-8 支持(避免中文乱码)
+├── templates/            # go-msi 模板(仓库维护,见下方说明)
+│   ├── product.wxs       # 主模板:Product 加 Codepage="65001"(UTF-8,中文可存)
+│   ├── WixUI_HK.wxs      # 安装 UI 对话框
+│   └── LicenseAgreementDlg_HK.wxs
 ├── wix.json              # go-msi 配置(files / shortcuts / hooks)
 ├── build.ps1             # Windows 完整构建脚本(go build + go-msi make)
+├── build-msi.sh          # Linux(wine)构建脚本
+├── build-msi-docker.sh   # Linux(Docker 容器)构建脚本(推荐)
 ├── Makefile              # Linux/macOS 交叉编译 exe + 准备打包文件
 └── README.md
 ```
 
 > `docker-compose.yaml` 与 `readme.txt` 不打入仓库,构建时由
 > Makefile / build.ps1 从 `../picoclaw-docker/` 复制到本目录后一起打包。
+
+**模板来源**:`templates/` 为 go-msi
+[`v0.0.0-20200224144923-4783d3eea8eb`](https://github.com/mat007/go-msi/tree/4783d3eea8eb/templates)
+的模板副本(MIT 许可),`product.wxs` 在原版基础上为 `<Product>` 增加
+`Codepage="65001"`(UTF-8 码页),使 shortcut description 等中文字符不再触发
+`LGHT0311` 码页错误。三个构建脚本均优先使用本目录模板。
 
 ## 构建
 

@@ -48,15 +48,19 @@ fi
 mkdir -p "$CTX"
 cp -f "$GO_MSI" "$CTX/go-msi"
 rm -rf "$CTX/templates"
-# 模板来自 Go module cache(只读 0444),cp -r 会保留只读权限导致后续无法清理,
-# 复制后显式恢复写权限
-if [ -d "$(go env GOPATH)/bin/templates" ]; then
-    chmod -R u+w "$(go env GOPATH)/bin/templates" 2>/dev/null || true
-    cp -r "$(go env GOPATH)/bin/templates" "$CTX/"
+# 优先使用仓库模板(msi/templates/,含 Codepage=65001 修复);
+# 回退到 go-msi 默认模板(module cache 只读 0444,复制后恢复写权限)
+if [ -d "$MSI_DIR/templates" ]; then
+    cp -r "$MSI_DIR/templates" "$CTX/"
 else
-    SRC="$(ls -d "$(go env GOMODCACHE)/github.com/mat007/go-msi@*" 2>/dev/null | head -1 || true)"
-    [ -n "$SRC" ] || die "未找到 go-msi 模板(module cache),请先执行: go install github.com/mat007/go-msi@latest"
-    cp -r "$SRC/templates" "$CTX/"
+    if [ -d "$(go env GOPATH)/bin/templates" ]; then
+        chmod -R u+w "$(go env GOPATH)/bin/templates" 2>/dev/null || true
+        cp -r "$(go env GOPATH)/bin/templates" "$CTX/"
+    else
+        SRC="$(ls -d "$(go env GOMODCACHE)/github.com/mat007/go-msi@*" 2>/dev/null | head -1 || true)"
+        [ -n "$SRC" ] || die "未找到 go-msi 模板(module cache),请先执行: go install github.com/mat007/go-msi@latest"
+        cp -r "$SRC/templates" "$CTX/"
+    fi
 fi
 chmod -R u+w "$CTX/templates"
 
