@@ -21,8 +21,12 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources \
     && dpkg --add-architecture i386 \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-         wine wine32:i386 unzip ca-certificates xvfb xauth \
+         wine wine32:i386 unzip ca-certificates xvfb xauth locales \
     && rm -rf /var/lib/apt/lists/*
+
+# 生成 zh_CN.GB2312 locale:light 按系统 ANSI 码页读取 wxl(不看 XML 声明),
+# 中文必须 GBK 编码 + ANSI=936,否则 UTF-8 中文被按 1252 读取 → 乱码
+RUN localedef -i zh_CN -f GB2312 zh_CN.GB2312 2>/dev/null || true
 
 # 2) WiX 3.11(wix311-binaries.zip,免安装)
 COPY wix311-binaries.zip /opt/wix311.zip
