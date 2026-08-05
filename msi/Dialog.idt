@@ -1,0 +1,10 @@
+Dialog	HCentering	VCentering	Width	Height	Attributes	Title	Control_First	Control_Default	Control_Cancel
+s72	i2	i2	i2	i2	I4	L128	s50	S50	S50
+Dialog	Dialog
+WelcomeDlg	50	50	370	270	3	VPOT °2×°?òμ?	Next	Next	Cancel
+InstallDirDlg	50	50	370	270	3	????°2×°????	Next	Next	Cancel
+ProgressDlg	50	50	370	270	1	?y?ú°2×° VPOT	Cancel		Cancel
+ExitDialog	50	50	370	270	3	°2×°íê3é	Finish	Finish	Cancel
+WslInfoDlg	50	50	370	270	3	μú 1 2? / 3:°2×° WSL	BodyText	Next	Cancel
+DockerInfoDlg	50	50	370	270	3	μú 2 2? / 3:°2×° Docker	BodyText	Next	Cancel
+RunCmdInfoDlg	50	50	370	270	3	μú 3 2? / 3:??DD°2×°?òμ?	BodyText	Next	Cancel

@@ -9,7 +9,7 @@
             Name="VPOT"
             Version="@VERSION@"
             Manufacturer="lib10"
-            Language="1033" Codepage="65001">
+            Language="1033" Codepage="@CODEPAGE@">
 
       <Package InstallerVersion="200" Compressed="yes"
                Description="VPOT @VERSION@"
@@ -55,11 +55,11 @@
       <!-- 默认安装目录:D:\vpot(可被 InstallDirDlg 修改) -->
       <Property Id="INSTALLDIR" Value="D:\vpot" Secure="yes"/>
 
-      <!-- UI 序列:取消/进度/完成 -->
+      <!-- UI 序列:欢迎(正常安装先显示)→ 进度 → 完成 -->
       <InstallUISequence>
-         <Show Dialog="WelcomeDlg" OnExit="cancel"/>
+         <Show Dialog="WelcomeDlg" Before="CostFinalize">NOT Installed</Show>
          <Show Dialog="ProgressDlg" After="CostFinalize">NOT Installed</Show>
-         <Show Dialog="ExitDialog" OnExit="success"/>
+         <Show Dialog="ExitDialog" OnExit="success">NOT Installed</Show>
       </InstallUISequence>
 
    </Product>

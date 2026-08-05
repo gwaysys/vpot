@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<WixLocalization Culture="zh-CN" Codepage="65001" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+<WixLocalization Culture="zh-CN" Codepage="936" xmlns="http://schemas.microsoft.com/wix/2006/localization">
   <!-- 第 1 步:WSL 说明 -->
   <String Id="WslInfoDlgTitle">第 1 步 / 3:安装 WSL</String>
   <String Id="WslInfoDlgDescription">系统缺少 WSL,请先下载并安装。</String>

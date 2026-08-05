@@ -14,11 +14,13 @@ WIX="Z:\opt\wix"
 
 cd /build
 
-echo "==> 渲染 product.wxs(@VERSION@/@UPGRADE_CODE@)"
+echo "==> 渲染 product.wxs(@VERSION@/@UPGRADE_CODE@/@CODEPAGE@)"
 # 在容器内临时目录编译,避免中间产物(wixobj/wixpdb/product.gen.*)污染 /build
 rm -rf /tmp/work && mkdir -p /tmp/work && cd /tmp/work
 cp -f /build/install-windows.cmd /build/docker-compose.yaml /build/readme.txt .
-sed -e "s/@VERSION@/$VERSION/g" -e "s/@UPGRADE_CODE@/$UPGRADE_CODE/g" /build/templates/product.wxs > product.gen.wxs
+# 数据库码页:中文用 936(GBK,MSI UI 正确渲染),英文用 1252
+if [ "$CULTURE" = "en-US" ]; then CODEPAGE="1252"; else CODEPAGE="936"; fi
+sed -e "s/@VERSION@/$VERSION/g" -e "s/@UPGRADE_CODE@/$UPGRADE_CODE/g" -e "s/@CODEPAGE@/$CODEPAGE/g" /build/templates/product.wxs > product.gen.wxs
 cp -f /build/templates/dialogs.wxs /build/templates/InfoDialogs.wxs .
 
 echo "==> candle 编译(3 个 wxs)"

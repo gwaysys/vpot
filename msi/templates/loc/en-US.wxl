@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<WixLocalization Culture="en-US" Codepage="65001" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+<WixLocalization Culture="en-US" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
   <!-- Step 1: WSL info -->
   <String Id="WslInfoDlgTitle">Step 1 / 3: Install WSL</String>
   <String Id="WslInfoDlgDescription">WSL is required. Please download and install it first.</String>

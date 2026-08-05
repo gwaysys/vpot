@@ -1,0 +1,13 @@
+Property	Value
+s72	l0
+Property	Property
+INSTALLDIR	D:\vpot
+WIXUI_INSTALLDIR	INSTALLDIR
+ALLUSERS	1
+Manufacturer	lib10
+ProductCode	{BBBBBBBB-1111-2222-3333-444455556666}
+ProductLanguage	1033
+ProductName	VPOT
+ProductVersion	1.1.5
+UpgradeCode	{0364AA07-E538-4290-B1FB-FBA6403C9E2E}
+SecureCustomProperties	INSTALLDIR
