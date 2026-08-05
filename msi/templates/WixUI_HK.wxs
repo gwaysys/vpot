@@ -35,7 +35,7 @@
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgTitle)"/>
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgDescription)"/>
             <Control Id="FolderLabel" Type="Text" X="25" Y="70" Width="320" Height="15" NoPrefix="yes" Text="!(loc.InstallDirDlgFolderLabel)"/>
-            <Control Id="Folder" Type="PathEdit" X="25" Y="90" Width="320" Height="18" Property="WIXUI_INSTALLDIR" Indirect="yes"/>
+            <Control Id="Folder" Type="PathEdit" X="25" Y="90" Width="320" Height="18" Property="INSTALLDIR"/>
             <Control Id="ChangeFolder" Type="PushButton" X="25" Y="118" Width="120" Height="17" Text="!(loc.InstallDirDlgChangeFolder)"/>
          </Dialog>
 
@@ -127,14 +127,6 @@
             <Control Id="Text" Type="Text" X="35" Y="20" Width="210" Height="20" Text="!(loc.CancelDlgText)"/>
          </Dialog>
 
-         <!-- 错误提示(ErrorDialog 属性引用) -->
-         <Dialog Id="ErrorDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
-            <Control Id="OK" Type="PushButton" X="304" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_OK)">
-               <Publish Event="EndDialog" Value="Return">1</Publish>
-            </Control>
-            <Control Id="ErrorText" Type="Text" X="25" Y="30" Width="320" Height="180" TabSkip="no" Text="[Error1]"/>
-         </Dialog>
-
          <!-- 目录浏览(更改安装目录) -->
          <Dialog Id="BrowseDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
             <Control Id="OK" Type="PushButton" X="304" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_OK)"/>
@@ -183,14 +175,13 @@
 
          <!-- 目录选择 -->
          <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="RunCmdInfoDlg">1</Publish>
-         <!-- 安装:应用目录后直接开始安装(跳过确认页) -->
-         <Publish Dialog="InstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
-         <Publish Dialog="InstallDirDlg" Control="Next" Event="EndDialog" Value="Return" Order="2">1</Publish>
+         <!-- 安装:目录路径已由 PathEdit 直接写入 INSTALLDIR 属性,直接开始安装(不 SetTargetPath,避免 2707) -->
+         <Publish Dialog="InstallDirDlg" Control="Next" Event="EndDialog" Value="Return">1</Publish>
          <!-- 更改目录:把当前目录存入 _BrowseProperty,弹出浏览对话框 -->
          <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
          <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
-         <!-- 浏览对话框:确定 → 应用所选目录并返回 -->
-         <Publish Dialog="BrowseDlg" Control="OK" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
+         <!-- 浏览对话框:确定 → 把所选路径写入 INSTALLDIR 属性并返回(不用 SetTargetPath,避免 2707) -->
+         <Publish Dialog="BrowseDlg" Control="OK" Event="SetProperty" Value="INSTALLDIR=[_BrowseProperty]" Order="1">1</Publish>
          <Publish Dialog="BrowseDlg" Control="OK" Event="EndDialog" Value="Return" Order="2">1</Publish>
          <Publish Dialog="BrowseDlg" Control="Cancel" Event="EndDialog" Value="Return">1</Publish>
 

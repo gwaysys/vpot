@@ -216,17 +216,21 @@
       <!-- this should help to propagate env var changes -->
       <CustomActionRef Id="WixBroadcastEnvironmentChange" />
 
-      <!-- 错误对话框:出错时显示(修复 ErrorDialog 属性未设置 2867) -->
-      <Property Id="ErrorDialog" Value="ErrorDlg" />
-
       <!-- 完成后打开安装目录(点击 ExitDialog 的"完成") -->
       <CustomAction Id="OpenInstallDir" Directory="INSTALLDIR"
                     ExeCommand="explorer.exe [INSTALLDIR]"
                     Impersonate="yes" Return="asyncNoWait" />
 
-      <!-- 文档区可点击操作(WixShellExec:经 WixShellExecTarget 属性执行命令/打开 URL) -->
-      <CustomAction Id="ExecShell" BinaryKey="WixCA" DllEntry="WixShellExec"
-                    Execute="immediate" Impersonate="yes" />
+      <!-- 文档区可点击操作(ExeCommand + asyncNoWait 异步执行,不卡 UI) -->
+      <CustomAction Id="ExecWslInstall" Directory="TARGETDIR"
+                    ExeCommand="powershell.exe -NoExit -Command &quot;wsl --install&quot;"
+                    Execute="immediate" Impersonate="no" Return="asyncNoWait" />
+      <CustomAction Id="DownloadWslMsi" Directory="TARGETDIR"
+                    ExeCommand="rundll32.exe url.dll,FileProtocolHandler https://lib10.cn/download/wsl.2.7.11.0.x64.msi"
+                    Execute="immediate" Impersonate="yes" Return="asyncNoWait" />
+      <CustomAction Id="DownloadDocker" Directory="TARGETDIR"
+                    ExeCommand="rundll32.exe url.dll,FileProtocolHandler https://www.docker.com/products/docker-desktop/"
+                    Execute="immediate" Impersonate="yes" Return="asyncNoWait" />
 
    </Product>
 

@@ -23,12 +23,10 @@
             <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="120"
                      Text="$(loc.WslInfoDlgBody)" />
             <Control Id="BtnWslInstall" Type="PushButton" X="25" Y="190" Width="150" Height="22" Text="$(loc.WslInfoDlgBtnInstall)">
-               <Publish Event="SetProperty" Value="WixShellExecTarget=powershell.exe -NoExit -Command &quot;wsl --install&quot;">1</Publish>
-               <Publish Event="DoAction" Value="ExecShell">1</Publish>
+               <Publish Event="DoAction" Value="ExecWslInstall">1</Publish>
             </Control>
             <Control Id="BtnWslDownload" Type="PushButton" X="185" Y="190" Width="160" Height="22" Text="$(loc.WslInfoDlgBtnDownload)">
-               <Publish Event="SetProperty" Value="WixShellExecTarget=rundll32.exe url.dll,FileProtocolHandler https://lib10.cn/download/wsl.2.7.11.0.x64.msi">1</Publish>
-               <Publish Event="DoAction" Value="ExecShell">1</Publish>
+               <Publish Event="DoAction" Value="DownloadWslMsi">1</Publish>
             </Control>
             <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Back)" />
             <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="$(loc.ButtonText_Next)" />
@@ -42,8 +40,7 @@
             <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="120"
                      Text="$(loc.DockerInfoDlgBody)" />
             <Control Id="BtnDockerDownload" Type="PushButton" X="25" Y="190" Width="200" Height="22" Text="$(loc.DockerInfoDlgBtnDownload)">
-               <Publish Event="SetProperty" Value="WixShellExecTarget=rundll32.exe url.dll,FileProtocolHandler https://www.docker.com/products/docker-desktop/">1</Publish>
-               <Publish Event="DoAction" Value="ExecShell">1</Publish>
+               <Publish Event="DoAction" Value="DownloadDocker">1</Publish>
             </Control>
             <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Back)" />
             <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="$(loc.ButtonText_Next)" />
