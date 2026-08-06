@@ -8,6 +8,6 @@
 7. 在picoclaw首面左侧菜单栏 -> 对话 -> 完成智能体的接入
 
 特别说明：
-1. picoclaw智能体运行在有root权限的docker中，对话时会自动在沙箱环境中自动安装需要的环境，不会对本机造成影响，长久运行后，应适时备份好docker环境，丢失后需要重新安装;
+1. picoclaw智能体运行在有root权限的docker中，对话时会在沙箱环境中自动安装需要的环境，不会对本机造成影响，长久运行时，应适时备份好docker操作作系统，丢失后需要重新安装;
 2. picoclaw的工作目录空间会被映射到当前目录的data下
 3. 源码可在https://git.yilingtu.com/lib10/picoclaw、https://github.com/gwaysys/vpot下查阅

@@ -46,7 +46,7 @@ msi/
 ```
 
 > `install-image.cmd`、`docker-compose.yaml`、`readme.txt` 不入仓库,
-> 构建时由 build 脚本从 `../picoclaw-docker/` 复制到本目录后一起打包。
+> 构建时由 build 脚本从 `../vpot-docker/` 复制到本目录后一起打包。
 
 **体积说明**:MSI 体积与打包器无关。此前约 500KB 是因为依赖
 WixUIExtension(其对话框/位图库资源较大);当前全部对话框手写、

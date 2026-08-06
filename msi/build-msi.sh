@@ -49,9 +49,9 @@ if [ ! -x "$GO_MSI" ]; then
     [ -x "$GO_MSI" ] || die "go-msi 安装失败"
 fi
 
-# 1. 动态生成打包配置(files = picoclaw-docker 全量文件,后续目录内容变更自动包含)
+# 1. 动态生成打包配置(files = vpot-docker 全量文件,后续目录内容变更自动包含)
 step "生成打包配置 wix.gen.json"
-PKG_SRC="$REPO_ROOT/picoclaw-docker"
+PKG_SRC="$REPO_ROOT/vpot-docker"
 python3 - "$MSI_DIR/wix.json" "$MSI_DIR/wix.gen.json" "$PKG_SRC" <<'PYEOF'
 import json, os, sys
 cfg_path, out_path, pkg_dir = sys.argv[1], sys.argv[2], sys.argv[3]

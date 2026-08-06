@@ -26,6 +26,7 @@ tar -xzf picoclaw.tar.gz
 
 # Run docker image
 ```
+cd vpot-docker
 sudo docker-compose -f docker-compose.yaml up -d # open browser visit: http://127.0.0.1:18800
 ```
 
@@ -43,6 +44,6 @@ https://github.com/microsoft/WSL/releases/download/2.1.5/wsl.2.1.5.0.x64.msi
 https://docs.docker.com/desktop/setup/install/windows-install/
 
 # open powershell and run
-docker login docker.lib10.cn
-docker-compose -f docker-compose.yaml up -d # open browser visit: http://127.0.0.1:18800
+cd vpot-docker
+sudo docker-compose -f docker-compose.yaml up -d # open browser visit: http://127.0.0.1:18800
 ```
