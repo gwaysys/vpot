@@ -1,9 +1,8 @@
 @echo off
 setlocal enabledelayedexpansion
-chcp 65001 >nul
 :: ============================================================
 ::    VPOT Install Script for Windows (bilingual)
-::    ä¸­è‹±åŒè¯­:å¼€å§‹æ—¶é€‰æ‹©è¯­è¨€ / Language selected at startup
+::    ÖĞÓ¢Ë«Óï:¿ªÊ¼Ê±Ñ¡ÔñÓïÑÔ / Language selected at startup
 :: ============================================================
 set "ScriptDir=%~dp0"
 set "ComposeFile=%ScriptDir%docker-compose.yaml"
@@ -12,7 +11,7 @@ echo ========================================
 echo          VPOT Install Script
 echo ========================================
 echo.
-:: è¯­è¨€å‚æ•°:%~1 = zh/zh-CN(ä¸­æ–‡)æˆ– en/en-US(è‹±æ–‡);ç¼ºçœèµ°äº¤äº’é€‰æ‹©
+:: ÓïÑÔ²ÎÊı:%~1 = zh/zh-CN(ÖĞÎÄ)»ò en/en-US(Ó¢ÎÄ);È±Ê¡×ß½»»¥Ñ¡Ôñ
 set "LANG="
 if /i "%1"=="zh" set "LANG=zh"
 if /i "%1"=="zh-CN" set "LANG=zh"
@@ -21,37 +20,37 @@ if /i "%1"=="en-US" set "LANG=en"
 if not "%LANG%"=="zh" if not "%LANG%"=="en" goto need_choice
 goto lang_done
 :need_choice
-echo    1. ä¸­æ–‡ (Chinese)
+echo    1. ÖĞÎÄ (Chinese)
 echo    2. English
 echo.
-choice /c 12 /n /m "  Select language / è¯·é€‰æ‹©è¯­è¨€ (1=ä¸­æ–‡, 2=English) [1]: "
+choice /c 12 /n /m "  Select language / ÇëÑ¡ÔñÓïÑÔ (1=ÖĞÎÄ, 2=English) [1]: "
 if errorlevel 2 (set "LANG=en") else (set "LANG=zh")
 :lang_done
 
-:: ---------------- æŒ‰è¯­è¨€è®¾ç½®æ¶ˆæ¯ ----------------
+:: ---------------- °´ÓïÑÔÉèÖÃÏûÏ¢ ----------------
 if "!LANG!"=="zh" (
-    set "M_CHECK_DOCKER=[*] æ­£åœ¨æ£€æŸ¥ Docker è¿è¡ŒçŠ¶æ€..."
-    set "M_DOCKER_RUNNING=    Docker æ­£åœ¨è¿è¡Œã€‚"
-    set "M_DOCKER_NOT_RUNNING=    Docker æœªåœ¨è¿è¡Œã€‚"
-    set "M_DOCKER_NOT_INSTALLED=    é”™è¯¯: æœªæ£€æµ‹åˆ° Dockerã€‚"
-    set "M_DOCKER_INSTALL_HINT=    è¯·å…ˆå®‰è£… Docker Desktop,ç„¶åé‡æ–°æ£€æµ‹ã€‚"
-    set "M_DOCKER_START_HINT=    è¯·å…ˆå¯åŠ¨ Docker Desktop,ç„¶åé‡æ–°æ£€æµ‹ã€‚"
-    set "M_ANYKEY_RETRY=    æŒ‰ä»»æ„é”®é‡æ–°æ£€æµ‹..."
-    set "M_START=[*] æ­£åœ¨å¯åŠ¨ VPOT å®¹å™¨..."
-    set "M_COMPOSE_FILE=    ç¼–æ’æ–‡ä»¶: !ComposeFile!"
-    set "M_COMPOSE_NOTFOUND=    é”™è¯¯: æ‰¾ä¸åˆ°ç¼–æ’æ–‡ä»¶ !ComposeFile!"
-    set "M_NO_COMPOSE=    é”™è¯¯: æœªæ‰¾åˆ° docker compose æˆ– docker-composeã€‚"
-    set "M_NO_COMPOSE_HINT=    è¯·ç¡®è®¤ Docker Desktop å·²å®‰è£…å¹¶æ­£åœ¨è¿è¡Œã€‚"
-    set "M_CHECK_OLD=    æ­£åœ¨æ£€æŸ¥å·²å­˜åœ¨çš„ vpot å®¹å™¨..."
-    set "M_OLD_FOUND=    å‘ç°å·²å­˜åœ¨çš„ vpot å®¹å™¨,æ­£åœ¨ç§»é™¤..."
-    set "M_OLD_REMOVED=    æ—§ vpot å®¹å™¨å·²ç§»é™¤ã€‚"
-    set "M_OLD_FAIL=    é”™è¯¯: ç§»é™¤æ—§ vpot å®¹å™¨å¤±è´¥,è¯·æ‰‹åŠ¨æ‰§è¡Œ: docker rm -f vpot"
-    set "M_RUNNING=    æ‰§è¡Œ: !composeCmd! -f "!ComposeFile!" up -d"
-    set "M_UP_FAIL=    é”™è¯¯: docker compose æ‰§è¡Œå¤±è´¥(exit code !ERRORLEVEL!),è¯·æŸ¥çœ‹ä¸Šæ–¹è¾“å‡ºã€‚"
-    set "M_UP_OK=    å®¹å™¨å¯åŠ¨æˆåŠŸã€‚"
-    set "M_COMPLETE_TITLE=VPOT éƒ¨ç½²å®Œæˆ!"
-    set "M_SERVICE_URL=æœåŠ¡åœ°å€:"
-    set "M_ANYKEY=æŒ‰ä»»æ„é”®é€€å‡º..."
+    set "M_CHECK_DOCKER=[*] ÕıÔÚ¼ì²é Docker ÔËĞĞ×´Ì¬..."
+    set "M_DOCKER_RUNNING=    Docker ÕıÔÚÔËĞĞ¡£"
+    set "M_DOCKER_NOT_RUNNING=    Docker Î´ÔÚÔËĞĞ¡£"
+    set "M_DOCKER_NOT_INSTALLED=    ´íÎó: Î´¼ì²âµ½ Docker¡£"
+    set "M_DOCKER_INSTALL_HINT=    ÇëÏÈ°²×° Docker Desktop,È»ºóÖØĞÂ¼ì²â¡£"
+    set "M_DOCKER_START_HINT=    ÇëÏÈÆô¶¯ Docker Desktop,È»ºóÖØĞÂ¼ì²â¡£"
+    set "M_ANYKEY_RETRY=    °´ÈÎÒâ¼üÖØĞÂ¼ì²â..."
+    set "M_START=[*] ÕıÔÚÆô¶¯ VPOT ÈİÆ÷..."
+    set "M_COMPOSE_FILE=    ±àÅÅÎÄ¼ş: !ComposeFile!"
+    set "M_COMPOSE_NOTFOUND=    ´íÎó: ÕÒ²»µ½±àÅÅÎÄ¼ş !ComposeFile!"
+    set "M_NO_COMPOSE=    ´íÎó: Î´ÕÒµ½ docker compose »ò docker-compose¡£"
+    set "M_NO_COMPOSE_HINT=    ÇëÈ·ÈÏ Docker Desktop ÒÑ°²×°²¢ÕıÔÚÔËĞĞ¡£"
+    set "M_CHECK_OLD=    ÕıÔÚ¼ì²éÒÑ´æÔÚµÄ vpot ÈİÆ÷..."
+    set "M_OLD_FOUND=    ·¢ÏÖÒÑ´æÔÚµÄ vpot ÈİÆ÷,ÕıÔÚÒÆ³ı..."
+    set "M_OLD_REMOVED=    ¾É vpot ÈİÆ÷ÒÑÒÆ³ı¡£"
+    set "M_OLD_FAIL=    ´íÎó: ÒÆ³ı¾É vpot ÈİÆ÷Ê§°Ü,ÇëÊÖ¶¯Ö´ĞĞ: docker rm -f vpot"
+    set "M_RUNNING=    Ö´ĞĞ: !composeCmd! -f "!ComposeFile!" up -d"
+    set "M_UP_FAIL=    ´íÎó: docker compose Ö´ĞĞÊ§°Ü(exit code !ERRORLEVEL!),Çë²é¿´ÉÏ·½Êä³ö¡£"
+    set "M_UP_OK=    ÈİÆ÷Æô¶¯³É¹¦¡£"
+    set "M_COMPLETE_TITLE=VPOT ²¿ÊğÍê³É!"
+    set "M_SERVICE_URL=·şÎñµØÖ·:"
+    set "M_ANYKEY=°´ÈÎÒâ¼üÍË³ö..."
 ) else (
     set "M_CHECK_DOCKER=[*] Checking if Docker daemon is running..."
     set "M_DOCKER_RUNNING=    Docker daemon is running."
@@ -80,7 +79,7 @@ if "!LANG!"=="zh" (
 echo.
 echo !M_CHECK_DOCKER!
 
-:: ---------------- Docker æ£€æµ‹(æœªå®‰è£…/æœªå¯åŠ¨,å‡ä»»æ„é”®é‡æ–°æ£€æµ‹) ----------------
+:: ---------------- Docker ¼ì²â(Î´°²×°/Î´Æô¶¯,¾ùÈÎÒâ¼üÖØĞÂ¼ì²â) ----------------
 :retry_docker
 where docker >nul 2>&1
 if errorlevel 1 (
@@ -104,7 +103,7 @@ if errorlevel 1 (
 )
 echo     !M_DOCKER_RUNNING!
 
-:: ---------------- å¯åŠ¨å®¹å™¨ ----------------
+:: ---------------- Æô¶¯ÈİÆ÷ ----------------
 call :StartVpotContainers
 if errorlevel 1 (
     echo.
@@ -151,9 +150,9 @@ exit /b 0
         echo     !M_NO_COMPOSE_HINT!
         exit /b 1
     )
-    :: æ¶ˆæ¯åœ¨ composeCmd ç¡®å®šåé‡è®¾(é¿å…ç©ºå±•å¼€)
+    :: ÏûÏ¢ÔÚ composeCmd È·¶¨ºóÖØÉè(±ÜÃâ¿ÕÕ¹¿ª)
     if "!LANG!"=="zh" (
-        set "M_RUNNING=    æ‰§è¡Œ: !composeCmd! -f "!ComposeFile!" up -d"
+        set "M_RUNNING=    Ö´ĞĞ: !composeCmd! -f "!ComposeFile!" up -d"
     ) else (
         set "M_RUNNING=    Running: !composeCmd! -f "!ComposeFile!" up -d"
     )
