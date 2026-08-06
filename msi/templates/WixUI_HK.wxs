@@ -9,13 +9,11 @@
 
          <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
          <Property Id="WixUI_Mode" Value="InstallDir" />
-         <Property Id="ErrorDialog" Value="ErrorDlg" />
 
          <!-- 自定义对话框(三步说明 / 旧版询问)-->
          <DialogRef Id="OldVersionDlg"/>
          <DialogRef Id="WslInfoDlg"/>
          <DialogRef Id="DockerInfoDlg"/>
-         <DialogRef Id="RunCmdInfoDlg"/>
 
          <!-- ============ 自写向导对话框(标题栏/正文全部走语言包) ============ -->
 
@@ -30,7 +28,7 @@
 
          <!-- 安装目录选择(默认 D:\vpot,可编辑) -->
          <Dialog Id="InstallDirDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
-            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Install)"/>
+            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Next)"/>
             <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Back)"/>
             <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgTitle)"/>
@@ -39,6 +37,19 @@
             <Control Id="Folder" Type="PathEdit" X="25" Y="90" Width="320" Height="18" Property="INSTALLDIR"/>
             <Control Id="ChangeFolder" Type="PushButton" X="25" Y="118" Width="120" Height="17" Text="!(loc.InstallDirDlgChangeFolder)"/>
          </Dialog>
+
+         <!-- 即将完成(安装确认页,仅安装模式;维护模式按钮直接执行不经过此页) -->
+         <Dialog Id="VerifyReadyDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
+            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Back)"/>
+            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
+            <Control Id="Install" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Install)">
+               <Publish Event="EndDialog" Value="Return">1</Publish>
+            </Control>
+            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.VerifyReadyDlgTitle)"/>
+            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.VerifyReadyDlgDescription)"/>
+            <Control Id="Body" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.RunCmdInfoDlgBody)"/>
+         </Dialog>
+         <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="InstallDirDlg">1</Publish>
 
          <!-- 安装确认(安装/修复/移除/更改共用,按模式显示) -->
          <!-- 安装进度 -->
@@ -59,7 +70,12 @@
             <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
             <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogTitle)"/>
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogDescription)"/>
-            <Control Id="Body" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.ExitDialogBody)"/>
+            <Control Id="InstallBody" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.ExitDialogBody)">
+               <Condition Action="show">NOT REMOVE</Condition>
+            </Control>
+            <Control Id="RemoveBody" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.ExitDialogRemoveBody)">
+               <Condition Action="show">REMOVE</Condition>
+            </Control>
          </Dialog>
 
          <!-- 维护模式欢迎(重跑 MSI) -->
@@ -92,14 +108,6 @@
             <Control Id="Text" Type="Text" X="35" Y="20" Width="210" Height="20" Text="!(loc.CancelDlgText)"/>
          </Dialog>
 
-         <!-- 错误对话框(msiexec 出错时显示;ErrorDialog=yes 官方标志) -->
-         <Dialog Id="ErrorDlg" Width="260" Height="85" Title="!(loc.WindowTitle)" NoMinimize="yes" ErrorDialog="yes">
-            <Control Id="ErrorText" Type="Text" X="15" Y="15" Width="230" Height="50" TabSkip="no" Text="[Error1]"/>
-            <Control Id="OK" Type="PushButton" X="102" Y="57" Width="56" Height="17" Default="yes" Cancel="yes" Text="!(loc.ButtonText_OK)">
-               <Publish Event="EndDialog" Value="Return">1</Publish>
-            </Control>
-         </Dialog>
-
          <!-- 目录浏览(更改安装目录) -->
          <Dialog Id="BrowseDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
             <Control Id="OK" Type="PushButton" X="304" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_OK)"/>
@@ -120,9 +128,8 @@
 
          <!-- ============ 事件链 ============ -->
 
-         <!-- 完成后打开安装目录 -->
-         <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="OpenInstallDir" Order="1">1</Publish>
-         <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+         <!-- 完成后直接退出(不打开安装目录:UI 会话提权启动 GUI 受限,报 2896) -->
+         <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return">1</Publish>
 
          <!-- 安装:欢迎 → 旧版询问 / 三步说明 -->
          <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="OldVersionDlg">NOT Installed AND VPOT_OLD_FOUND</Publish>
@@ -140,16 +147,14 @@
 
          <!-- 第 2 步:Docker 下载说明 -->
          <Publish Dialog="DockerInfoDlg" Control="Back" Event="NewDialog" Value="WslInfoDlg">1</Publish>
-         <Publish Dialog="DockerInfoDlg" Control="Next" Event="NewDialog" Value="RunCmdInfoDlg">1</Publish>
+         <Publish Dialog="DockerInfoDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg">1</Publish>
 
          <!-- 第 3 步:手动运行 install-windows.cmd 说明 -->
-         <Publish Dialog="RunCmdInfoDlg" Control="Back" Event="NewDialog" Value="DockerInfoDlg">1</Publish>
-         <Publish Dialog="RunCmdInfoDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg">1</Publish>
 
          <!-- 目录选择 -->
-         <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="RunCmdInfoDlg">1</Publish>
-         <!-- 安装:目录路径已由 PathEdit 直接写入 INSTALLDIR 属性,直接开始安装(不 SetTargetPath,避免 2707) -->
-         <Publish Dialog="InstallDirDlg" Control="Next" Event="EndDialog" Value="Return">1</Publish>
+         <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="DockerInfoDlg">1</Publish>
+         <!-- 下一步:到"即将完成"确认页(用户点"安装"后开始安装;目录路径已由 PathEdit 写入 INSTALLDIR 属性) -->
+         <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
          <!-- 更改目录:弹出浏览对话框(浏览控件直接绑定 INSTALLDIR 属性,选择即更新) -->
          <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg">1</Publish>
          <!-- 浏览对话框:确定 → 关闭返回(所选路径已在 INSTALLDIR 属性) -->

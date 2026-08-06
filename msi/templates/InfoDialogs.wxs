@@ -22,11 +22,11 @@
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.WslInfoDlgDescription)" />
             <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="120"
                      Text="$(loc.WslInfoDlgBody)" />
-            <Control Id="BtnWslInstall" Type="PushButton" X="25" Y="190" Width="150" Height="22" Text="$(loc.WslInfoDlgBtnInstall)">
-               <Publish Event="DoAction" Value="ExecWslInstall">1</Publish>
+            <Control Id="LinkWslInstall" Type="Hyperlink" X="25" Y="188" Width="320" Height="20">
+               <Text>&lt;a href="https://github.com/microsoft/WSL/releases"&gt;$(loc.WslInfoDlgBtnInstall)&lt;/a&gt;</Text>
             </Control>
-            <Control Id="BtnWslDownload" Type="PushButton" X="185" Y="190" Width="160" Height="22" Text="$(loc.WslInfoDlgBtnDownload)">
-               <Publish Event="DoAction" Value="DownloadWslMsi">1</Publish>
+            <Control Id="LinkWslDownload" Type="Hyperlink" X="25" Y="212" Width="320" Height="20">
+               <Text>&lt;a href="https://lib10.cn/download/wsl.2.7.11.0.x64.msi"&gt;$(loc.WslInfoDlgBtnDownload)&lt;/a&gt;</Text>
             </Control>
             <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Back)" />
             <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="$(loc.ButtonText_Next)" />
@@ -39,8 +39,8 @@
             <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.DockerInfoDlgDescription)" />
             <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="120"
                      Text="$(loc.DockerInfoDlgBody)" />
-            <Control Id="BtnDockerDownload" Type="PushButton" X="25" Y="190" Width="200" Height="22" Text="$(loc.DockerInfoDlgBtnDownload)">
-               <Publish Event="DoAction" Value="DownloadDocker">1</Publish>
+            <Control Id="LinkDockerDownload" Type="Hyperlink" X="25" Y="188" Width="320" Height="20">
+               <Text>&lt;a href="https://www.docker.com/products/docker-desktop/"&gt;$(loc.DockerInfoDlgBtnDownload)&lt;/a&gt;</Text>
             </Control>
             <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Back)" />
             <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="$(loc.ButtonText_Next)" />
@@ -48,15 +48,7 @@
          </Dialog>
 
          <!-- 第 3 步:手动运行 install-windows.cmd 说明 -->
-         <Dialog Id="RunCmdInfoDlg" Width="370" Height="270" Title="$(loc.RunCmdInfoDlgTitle)" NoMinimize="yes">
-            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.RunCmdInfoDlgTitle)" />
-            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.RunCmdInfoDlgDescription)" />
-            <Control Id="BodyText" Type="Text" X="25" Y="60" Width="320" Height="160"
-                     Text="$(loc.RunCmdInfoDlgBody)" />
-            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Back)" />
-            <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="$(loc.ButtonText_Next)" />
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
-         </Dialog>
+         <!-- 第 3 步说明已并入"即将完成"页(VerifyReadyDlg) -->
 
       </UI>
    </Fragment>

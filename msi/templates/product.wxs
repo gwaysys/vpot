@@ -3,7 +3,7 @@
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
-   <Product Id="*" UpgradeCode="{{.UpgradeCode}}"
+   <Product Id="{B35276FC-1AC9-4419-87EE-0F0747071B16}" UpgradeCode="{{.UpgradeCode}}"
             Name="{{.Product}}"
             Version="{{.Version.MSI}}"
             Manufacturer="{{.Company}}"
@@ -122,7 +122,6 @@
 
         <Directory Id="ProgramMenuFolder"/>
         <Directory Id="DesktopFolder"/>
-        <Directory Id="System64Folder"/>
 
         {{range $i, $s := .Shortcuts}}
         <Component Id="ApplicationShortcuts{{$i}}" Guid="{{if eq $i 0}}CCCCCCCC-0000-0000-0000-000000000020{{else}}CCCCCCCC-0000-0000-0000-000000000021{{end}}">
@@ -220,22 +219,6 @@
 
       <!-- this should help to propagate env var changes -->
       <CustomActionRef Id="WixBroadcastEnvironmentChange" />
-
-      <!-- 完成后打开安装目录(点击 ExitDialog 的"完成") -->
-      <CustomAction Id="OpenInstallDir" Directory="INSTALLDIR"
-                    ExeCommand="explorer.exe [INSTALLDIR]"
-                    Impersonate="yes" Return="asyncNoWait" />
-
-      <!-- 文档区可点击操作(ExeCommand + asyncNoWait 异步执行,不卡 UI) -->
-      <CustomAction Id="ExecWslInstall" Directory="System64Folder"
-                    ExeCommand="powershell.exe -NoExit -Command &quot;wsl --install&quot;"
-                    Execute="immediate" Impersonate="no" Return="asyncNoWait" />
-      <CustomAction Id="DownloadWslMsi" Directory="System64Folder"
-                    ExeCommand="rundll32.exe url.dll,FileProtocolHandler https://lib10.cn/download/wsl.2.7.11.0.x64.msi"
-                    Execute="immediate" Impersonate="yes" Return="asyncNoWait" />
-      <CustomAction Id="DownloadDocker" Directory="System64Folder"
-                    ExeCommand="rundll32.exe url.dll,FileProtocolHandler https://www.docker.com/products/docker-desktop/"
-                    Execute="immediate" Impersonate="yes" Return="asyncNoWait" />
 
       <!-- 维护/升级操作属性设置(VBScript 设 Session 属性;SetProperty 事件在此环境报 2812) -->
       <CustomAction Id="SetRepairProps" Script="vbscript" Execute="immediate" Impersonate="no">
