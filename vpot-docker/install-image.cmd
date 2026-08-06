@@ -14,16 +14,19 @@ echo ========================================
 echo.
 :: 语言参数:%~1 = zh/zh-CN(中文)或 en/en-US(英文);缺省走交互选择
 set "LANG="
-if /i not "%~1"=="" (
-    if /i "%~1:~0,2"=="zh" set "LANG=zh"
-    if /i "%~1:~0,2"=="en" set "LANG=en"
-)
-if not defined LANG (
-    echo    1. 中文 (Chinese)
-    echo    2. English
-    echo.
-    choice /c 12 /n /m "  Select language / 请选择语言 (1=中文, 2=English) [1]: "
-    if errorlevel 2 (set "LANG=en") else (set "LANG=zh")
+if /i "%1"=="zh" set "LANG=zh"
+if /i "%1"=="zh-CN" set "LANG=zh"
+if /i "%1"=="en" set "LANG=en"
+if /i "%1"=="en-US" set "LANG=en"
+if not "%LANG%"=="zh" if not "%LANG%"=="en" goto need_choice
+goto lang_done
+:need_choice
+echo    1. 中文 (Chinese)
+echo    2. English
+echo.
+choice /c 12 /n /m "  Select language / 请选择语言 (1=中文, 2=English) [1]: "
+if errorlevel 2 (set "LANG=en") else (set "LANG=zh")
+:lang_done
 )
 
 :: ---------------- 按语言设置消息 ----------------
@@ -31,7 +34,10 @@ if "!LANG!"=="zh" (
     set "M_CHECK_DOCKER=[*] 正在检查 Docker 运行状态..."
     set "M_DOCKER_RUNNING=    Docker 正在运行。"
     set "M_DOCKER_NOT_RUNNING=    Docker 未在运行。"
-    set "M_RETRY=    请先启动 Docker Desktop,然后按任意键重新检查..."
+    set "M_DOCKER_NOT_INSTALLED=    错误: 未检测到 Docker。"
+    set "M_DOCKER_INSTALL_HINT=    请先安装 Docker Desktop,然后重新检测。"
+    set "M_DOCKER_START_HINT=    请先启动 Docker Desktop,然后重新检测。"
+    set "M_ANYKEY_RETRY=    按任意键重新检测..."
     set "M_START=[*] 正在启动 VPOT 容器..."
     set "M_COMPOSE_FILE=    编排文件: !ComposeFile!"
     set "M_COMPOSE_NOTFOUND=    错误: 找不到编排文件 !ComposeFile!"
@@ -51,7 +57,10 @@ if "!LANG!"=="zh" (
     set "M_CHECK_DOCKER=[*] Checking if Docker daemon is running..."
     set "M_DOCKER_RUNNING=    Docker daemon is running."
     set "M_DOCKER_NOT_RUNNING=    Docker daemon is NOT running."
-    set "M_RETRY=    Start Docker Desktop, then press any key to retry..."
+    set "M_DOCKER_NOT_INSTALLED=    ERROR: Docker not found."
+    set "M_DOCKER_INSTALL_HINT=    Please install Docker Desktop, then re-check."
+    set "M_DOCKER_START_HINT=    Please start Docker Desktop, then re-check."
+    set "M_ANYKEY_RETRY=    Press any key to re-check..."
     set "M_START=[*] Starting VPOT containers..."
     set "M_COMPOSE_FILE=    Compose file: !ComposeFile!"
     set "M_COMPOSE_NOTFOUND=    ERROR: Compose file not found at !ComposeFile!"
@@ -72,15 +81,26 @@ if "!LANG!"=="zh" (
 echo.
 echo !M_CHECK_DOCKER!
 
-:: ---------------- Docker 运行检查(任意键重试) ----------------
+:: ---------------- Docker 检测(未安装/未启动,均任意键重新检测) ----------------
 :retry_docker
+where docker >nul 2>&1
+if errorlevel 1 (
+    echo.
+    echo     !M_DOCKER_NOT_INSTALLED!
+    echo     !M_DOCKER_INSTALL_HINT!
+    echo.
+    echo     !M_ANYKEY_RETRY!
+    pause >nul
+    goto retry_docker
+)
 docker info >nul 2>&1
 if errorlevel 1 (
     echo.
     echo     !M_DOCKER_NOT_RUNNING!
-    echo     !M_RETRY!
+    echo     !M_DOCKER_START_HINT!
     echo.
-    ping -n 6 127.0.0.1 >nul
+    echo     !M_ANYKEY_RETRY!
+    pause >nul
     goto retry_docker
 )
 echo     !M_DOCKER_RUNNING!

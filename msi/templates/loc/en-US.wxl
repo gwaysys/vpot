@@ -39,6 +39,7 @@
   <String Id="ProgressDlgText">Please wait while files are being installed...</String>
   <String Id="ExitDialogTitle">Installation Complete</String>
   <String Id="ExitDialogDescription">VPOT was installed successfully</String>
+  <String Id="ExitDialogRemoveTitle">Removal Complete</String>
   <String Id="ExitDialogRemoveBody">VPOT was removed successfully.&#13;&#10;Thank you for using VPOT.</String>
   <String Id="ExitDialogBody">Open the Start Menu and run &quot;VPOT&quot; (install-image.cmd) to finish environment checks and container deployment.&#13;&#10;Visit https://127.0.0.1:18800 once the service is up.</String>
   <String Id="ProgressDlgDescription">Please wait while VPOT is being installed.</String>

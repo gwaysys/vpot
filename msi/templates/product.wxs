@@ -208,7 +208,7 @@
       <InstallExecuteSequence>
          <RemoveExistingProducts After="InstallValidate">REMOVEOLD=1</RemoveExistingProducts>
          <!-- 提取完文件后自动运行 install-image.cmd,完成后进完成页(移除不运行) -->
-         <Custom Action="RunInstallWindowsCmd" After="InstallFiles">NOT REMOVE</Custom>
+         <Custom Action="RunInstallWindowsCmd" After="InstallFinalize">NOT REMOVE</Custom>
       </InstallExecuteSequence>
 
       <!-- UI 序列:安装(欢迎→说明→目录→进度→完成)/ 维护(欢迎→操作→进度→完成) -->
@@ -224,8 +224,7 @@
 
       <!-- 维护/升级操作属性设置(VBScript 设 Session 属性;SetProperty 事件在此环境报 2812) -->
       <CustomAction Id="SetRepairProps" Script="vbscript" Execute="immediate" Impersonate="no">
-        Session.Property("REINSTALL") = "ALL"
-        Session.Property("REINSTALLMODE") = "omus"
+        Session.Property("REINSTALL") = "ALL" : Session.Property("REINSTALLMODE") = "omus"
       </CustomAction>
       <CustomAction Id="SetRemoveProps" Script="vbscript" Execute="immediate" Impersonate="no">
         Session.Property("REMOVE") = "ALL"
@@ -234,13 +233,9 @@
         Session.Property("REMOVEOLD") = "1"
       </CustomAction>
 
-      <!-- 安装/修复完成后自动运行 install-image.cmd(带语言参数,中英文 MSI 各自编译进对应参数);同步等待完成后再进完成页 -->
-      <CustomAction Id="RunInstallWindowsCmd" Directory="INSTALLDIR"
-                    ExeCommand="install-image.cmd !(loc.Culture)"
-                    Execute="deferred" Return="ignore" Impersonate="no" />
-      <!-- 完成页"完成"按钮:打开安装目录(VBScript,避开 UI 会话 WixShellExec 的 2896) -->
-      <CustomAction Id="OpenInstallDir" Script="vbscript" Execute="immediate" Impersonate="yes">
-        CreateObject("WScript.Shell").Run "explorer.exe """ &amp; Session.Property("INSTALLDIR") &amp; """"
+      <!-- 安装/修复完成后自动运行 install-image.cmd(带语言参数,中英文 MSI 各自编译进对应参数);可见 cmd 窗口运行,不阻塞安装 -->
+      <CustomAction Id="RunInstallWindowsCmd" Script="vbscript" Execute="immediate" Impersonate="yes" Return="ignore">
+        CreateObject("WScript.Shell").Run "cmd /k cd /d """ &amp; Session.Property("INSTALLDIR") &amp; """ &amp;&amp; install-image.cmd !(loc.Culture)", 1, False
       </CustomAction>
 
    </Product>

@@ -16,6 +16,9 @@ TPL="$(dirname "$(command -v go-msi)")/templates"
 if [ "$CULTURE" = "en-US" ]; then CODEPAGE="1252"; else CODEPAGE="936"; fi
 # go-msi 模板硬编码 Codepage=65001,按语言渲染(否则与 wxl 码页不一致)
 sed -i "s/Codepage=\"65001\"/Codepage=\"$CODEPAGE\"/" "$TPL/product.wxs"
+# 注入固定 ProductCode / PackageCode(由 build-msi.sh 配置;固定后同产品重构建不报 1500)
+sed -i "s|<Product Id=\"[^\"]*\"|<Product Id=\"$PRODUCT_CODE\"|" "$TPL/product.wxs"
+sed -i "s|<Package |<Package Id=\"$PACKAGE_CODE\" |" "$TPL/product.wxs"
 
 echo "==> go-msi set-guid(固化 GUID)"
 go-msi set-guid --path "$WIX_JSON" >/dev/null 2>&1 || true

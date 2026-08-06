@@ -27,6 +27,13 @@ REPO_ROOT="$(cd "$MSI_DIR/.." && pwd)"
 CTX="$MSI_DIR/docker"
 IMAGE="${VPOT_MSI_IMAGE:-vpot-msi-builder}"
 
+# ---- MSI 标识配置(可自行修改)----
+# ProductCode:产品标识;PackageCode:包标识。
+# 两者固定 → 同 ProductCode 重新构建不再报"已安装另一版本"(1500);
+# 需要做全新安装/升级时可自行改 PRODUCT_CODE(旧版会被 Upgrade 检测询问)。
+PRODUCT_CODE="${PRODUCT_CODE:-{B35276FC-1AC9-4419-87EE-0F0747071B16}}"
+PACKAGE_CODE="${PACKAGE_CODE:-{8A2E3F40-5B6C-4D7E-9F10-23456789ABCD}}"
+
 step() { echo; echo "==> $*"; }
 die() { echo "错误: $*" >&2; exit 1; }
 
@@ -111,6 +118,7 @@ $DOCKER build -t "$IMAGE" "$CTX"
 for CULTURE in "${CULTURES[@]}"; do
     step "容器内编译 -> vpot-setup-$VERSION-$CULTURE.msi"
     $DOCKER run --rm -e CULTURE="$CULTURE" -e WIX_JSON="wix.gen.json" \
+        -e PRODUCT_CODE="$PRODUCT_CODE" -e PACKAGE_CODE="$PACKAGE_CODE" \
         -v "$MSI_DIR":/build -v "$PKG_SRC":/pkg \
         "$IMAGE" "vpot-setup-$VERSION-$CULTURE.msi" "$VERSION"
 

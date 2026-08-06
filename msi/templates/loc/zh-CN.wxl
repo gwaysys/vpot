@@ -39,6 +39,7 @@
   <String Id="ProgressDlgText">请稍候,正在安装文件...</String>
   <String Id="ExitDialogTitle">安装完成</String>
   <String Id="ExitDialogDescription">VPOT 已成功安装</String>
+  <String Id="ExitDialogRemoveTitle">移除完成</String>
   <String Id="ExitDialogRemoveBody">VPOT 已成功移除。&#13;&#10;感谢使用,再见。</String>
   <String Id="ExitDialogBody">请打开开始菜单,运行 &quot;VPOT&quot;(install-image.cmd)完成环境检测与容器部署。&#13;&#10;服务启动后访问 https://127.0.0.1:18800。</String>
   <String Id="ProgressDlgDescription">请稍候,正在安装 VPOT。</String>

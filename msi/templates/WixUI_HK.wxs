@@ -66,15 +66,21 @@
 
          <!-- 完成 -->
          <Dialog Id="ExitDialog" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
-            <Control Id="Finish" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Finish)"/>
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
-            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogTitle)"/>
-            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogDescription)"/>
+            <Control Id="Finish" Type="PushButton" X="304" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Finish)"/>
+            <Control Id="InstallTitle" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogTitle)">
+               <Condition Action="hide">REMOVE</Condition>
+            </Control>
+            <Control Id="RemoveTitle" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogRemoveTitle)">
+               <Condition Action="hide">NOT REMOVE</Condition>
+            </Control>
+            <Control Id="InstallDesc" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogDescription)">
+               <Condition Action="hide">REMOVE</Condition>
+            </Control>
             <Control Id="InstallBody" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.ExitDialogBody)">
-               <Condition Action="show">NOT REMOVE</Condition>
+               <Condition Action="hide">REMOVE</Condition>
             </Control>
             <Control Id="RemoveBody" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.ExitDialogRemoveBody)">
-               <Condition Action="show">REMOVE</Condition>
+               <Condition Action="hide">NOT REMOVE</Condition>
             </Control>
          </Dialog>
 
@@ -128,9 +134,8 @@
 
          <!-- ============ 事件链 ============ -->
 
-         <!-- 完成后打开安装目录(VBScript 动作)+ 退出 -->
-         <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="OpenInstallDir" Order="1">1</Publish>
-         <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="2">1</Publish>
+         <!-- 完成后直接退出 -->
+         <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return">1</Publish>
 
          <!-- 安装:欢迎 → 旧版询问 / 三步说明 -->
          <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="OldVersionDlg">NOT Installed AND VPOT_OLD_FOUND</Publish>
