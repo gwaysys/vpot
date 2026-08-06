@@ -9,6 +9,7 @@ export WINEDEBUG=-all WINEARCH=win32 WINEPREFIX=/root/.wine32
 MSI_FILE="${1:?缺少 msi 文件名参数}"
 VERSION="${2:?缺少版本号参数}"
 CULTURE="${CULTURE:-zh-CN}"
+WIX_JSON="${WIX_JSON:-wix.json}"
 TPL="$(dirname "$(command -v go-msi)")/templates"
 
 # 数据库码页:中文用 936(GBK,MSI UI 正确渲染),英文用 1252
@@ -17,10 +18,10 @@ if [ "$CULTURE" = "en-US" ]; then CODEPAGE="1252"; else CODEPAGE="936"; fi
 sed -i "s/Codepage=\"65001\"/Codepage=\"$CODEPAGE\"/" "$TPL/product.wxs"
 
 echo "==> go-msi set-guid(固化 GUID)"
-go-msi set-guid --path wix.json >/dev/null 2>&1 || true
+go-msi set-guid --path "$WIX_JSON" >/dev/null 2>&1 || true
 
 echo "==> go-msi make -> $MSI_FILE"
-if go-msi make --msi "$MSI_FILE" --version "$VERSION" --arch amd64 --path wix.json --keep; then
+if go-msi make --msi "$MSI_FILE" --version "$VERSION" --arch amd64 --path "$WIX_JSON" --keep; then
     echo "go-msi make 成功"
 else
     # go-msi 生成的 build.bat 缺 -loc(语言包)与 wine 所需的 -sval:

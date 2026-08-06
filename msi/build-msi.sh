@@ -49,12 +49,21 @@ if [ ! -x "$GO_MSI" ]; then
     [ -x "$GO_MSI" ] || die "go-msi 安装失败"
 fi
 
-# 1. 准备打包文件(install-image.cmd / docker-compose.yaml / readme.txt)
-step "准备打包文件"
-cp -f "$REPO_ROOT/picoclaw-docker/install-image.cmd" "$MSI_DIR/"
-cp -f "$REPO_ROOT/picoclaw-docker/docker-compose.yaml" "$MSI_DIR/"
-cp -f "$REPO_ROOT/picoclaw-docker/readme.txt" "$MSI_DIR/"
-cp -f "$REPO_ROOT/picoclaw-docker/image-guide.png" "$MSI_DIR/"
+# 1. 动态生成打包配置(files = picoclaw-docker 全量文件,后续目录内容变更自动包含)
+step "生成打包配置 wix.gen.json"
+PKG_SRC="$REPO_ROOT/picoclaw-docker"
+python3 - "$MSI_DIR/wix.json" "$MSI_DIR/wix.gen.json" "$PKG_SRC" <<'PYEOF'
+import json, os, sys
+cfg_path, out_path, pkg_dir = sys.argv[1], sys.argv[2], sys.argv[3]
+cfg = json.load(open(cfg_path, encoding='utf-8'))
+files = []
+for name in sorted(os.listdir(pkg_dir)):
+    if os.path.isfile(os.path.join(pkg_dir, name)):
+        files.append({"path": f"../pkg/{name}"})
+cfg["files"] = files
+json.dump(cfg, open(out_path, 'w', encoding='utf-8'), indent=2, ensure_ascii=False)
+print(f"打包文件 {len(files)} 个: " + ", ".join(f["path"] for f in files))
+PYEOF
 
 # 2. 准备构建上下文(go-msi 二进制 + 模板 + WiX + wine-mono,Dockerfile 直接 COPY)
 step "准备构建上下文"
@@ -101,13 +110,18 @@ $DOCKER build -t "$IMAGE" "$CTX"
 # 4. 容器内编译(每个 culture 一次;镜像已构建,直接复用)
 for CULTURE in "${CULTURES[@]}"; do
     step "容器内编译 -> vpot-setup-$VERSION-$CULTURE.msi"
-    $DOCKER run --rm -e CULTURE="$CULTURE" -v "$MSI_DIR":/build "$IMAGE" "vpot-setup-$VERSION-$CULTURE.msi" "$VERSION"
+    $DOCKER run --rm -e CULTURE="$CULTURE" -e WIX_JSON="wix.gen.json" \
+        -v "$MSI_DIR":/build -v "$PKG_SRC":/pkg \
+        "$IMAGE" "vpot-setup-$VERSION-$CULTURE.msi" "$VERSION"
 
     # 5. 修复产物属主(容器内以 root 写入,文件归 root 所有)
     if [ -f "$MSI_DIR/vpot-setup-$VERSION-$CULTURE.msi" ]; then
         sudo chown "$(id -u):$(id -g)" "$MSI_DIR/vpot-setup-$VERSION-$CULTURE.msi" 2>/dev/null || true
     fi
 done
+
+# 6. 清理临时打包配置
+rm -f "$MSI_DIR/wix.gen.json"
 
 echo
 echo "=============================================="
