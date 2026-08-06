@@ -27,7 +27,6 @@ echo.
 choice /c 12 /n /m "  Select language / 请选择语言 (1=中文, 2=English) [1]: "
 if errorlevel 2 (set "LANG=en") else (set "LANG=zh")
 :lang_done
-)
 
 :: ---------------- 按语言设置消息 ----------------
 if "!LANG!"=="zh" (
