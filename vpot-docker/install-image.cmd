@@ -114,9 +114,9 @@ if errorlevel 1 (
 echo.
 echo ========================================
 echo   !M_COMPLETE_TITLE!
-echo   !M_SERVICE_URL! http://localhost:18800
+echo   !M_SERVICE_URL! https://localhost:18800
 echo ========================================
-start "" "http://localhost:18800"
+start "" "https://localhost:18800"
 echo.
 echo !M_ANYKEY!
 ping -n 6 127.0.0.1 >nul
