@@ -46,11 +46,6 @@
   <String Id="ButtonText_Remove">移除</String>
   <String Id="ButtonText_Yes">是</String>
   <String Id="ButtonText_No">否</String>
-  <String Id="VerifyReadyDlgTitle">准备安装</String>
-  <String Id="VerifyReadyDlgDescription">请确认安装设置</String>
-  <String Id="VerifyReadyDlgInstallText">单击&quot;安装&quot;开始安装 VPOT。</String>
-  <String Id="VerifyReadyDlgRepairText">单击&quot;修复&quot;修复 VPOT 的安装。</String>
-  <String Id="VerifyReadyDlgRemoveText">单击&quot;移除&quot;将 VPOT 从计算机上移除。</String>
   <String Id="MaintenanceWelcomeDlgTitle">维护 VPOT</String>
   <String Id="MaintenanceWelcomeDlgDescription">选择要对 VPOT 执行的操作。</String>
   <String Id="MaintenanceWelcomeDlgBody">你可以修复或移除 VPOT 的安装。&#13;&#10;单击&quot;下一步&quot;继续。</String>

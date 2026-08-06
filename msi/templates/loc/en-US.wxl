@@ -46,11 +46,6 @@
   <String Id="ButtonText_Remove">Remove</String>
   <String Id="ButtonText_Yes">Yes</String>
   <String Id="ButtonText_No">No</String>
-  <String Id="VerifyReadyDlgTitle">Ready to Install</String>
-  <String Id="VerifyReadyDlgDescription">Confirm your installation settings</String>
-  <String Id="VerifyReadyDlgInstallText">Click &quot;Install&quot; to begin installing VPOT.</String>
-  <String Id="VerifyReadyDlgRepairText">Click &quot;Repair&quot; to repair the VPOT installation.</String>
-  <String Id="VerifyReadyDlgRemoveText">Click &quot;Remove&quot; to remove VPOT from your computer.</String>
   <String Id="MaintenanceWelcomeDlgTitle">Maintain VPOT</String>
   <String Id="MaintenanceWelcomeDlgDescription">Choose what you want to do with VPOT.</String>
   <String Id="MaintenanceWelcomeDlgBody">You can repair or remove the VPOT installation.&#13;&#10;Click &quot;Next&quot; to continue.</String>

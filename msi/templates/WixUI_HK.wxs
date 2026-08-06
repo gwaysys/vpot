@@ -41,34 +41,6 @@
          </Dialog>
 
          <!-- 安装确认(安装/修复/移除/更改共用,按模式显示) -->
-         <Dialog Id="VerifyReadyDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes">
-            <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Back)"/>
-            <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="!(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
-            <Control Id="Install" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Install)">
-               <Publish Event="EndDialog" Value="Return">1</Publish>
-               <Condition Action="show">NOT Installed</Condition>
-            </Control>
-            <Control Id="Repair" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Repair)">
-               <Publish Event="EndDialog" Value="Return">1</Publish>
-               <Condition Action="show">Installed AND REINSTALL</Condition>
-            </Control>
-            <Control Id="Remove" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Remove)">
-               <Publish Event="EndDialog" Value="Return">1</Publish>
-               <Condition Action="show">Installed AND REMOVE</Condition>
-            </Control>
-            <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.VerifyReadyDlgTitle)"/>
-            <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.VerifyReadyDlgDescription)"/>
-            <Control Id="InstallText" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.VerifyReadyDlgInstallText)">
-               <Condition Action="show">NOT Installed</Condition>
-            </Control>
-            <Control Id="RepairText" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.VerifyReadyDlgRepairText)">
-               <Condition Action="show">Installed AND REINSTALL</Condition>
-            </Control>
-            <Control Id="RemoveText" Type="Text" X="25" Y="60" Width="320" Height="160" Text="!(loc.VerifyReadyDlgRemoveText)">
-               <Condition Action="show">Installed AND REMOVE</Condition>
-            </Control>
-         </Dialog>
-
          <!-- 安装进度 -->
          <Dialog Id="ProgressDlg" Width="370" Height="270" Title="!(loc.WindowTitle)" NoMinimize="yes" Modeless="yes" TrackDiskSpace="yes">
             <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
@@ -184,18 +156,14 @@
          <Publish Dialog="BrowseDlg" Control="OK" Event="EndDialog" Value="Return">1</Publish>
          <Publish Dialog="BrowseDlg" Control="Cancel" Event="EndDialog" Value="Return">1</Publish>
 
-         <!-- 确认页 -->
-         <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="InstallDirDlg">NOT Installed</Publish>
-         <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg">Installed</Publish>
-
          <!-- 维护模式 -->
          <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
-         <!-- 维护模式:按钮先经 DoAction 用 VBScript 设属性(SetProperty 事件在此环境报 2812),再进确认页 -->
+         <!-- 维护模式:按钮先经 DoAction 用 VBScript 设属性(SetProperty 事件在此环境报 2812),再直接 EndDialog 执行修复/移除 -->
          <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
          <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="DoAction" Value="SetRepairProps" Order="1">1</Publish>
-         <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
+         <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="EndDialog" Value="Return" Order="2">1</Publish>
          <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="DoAction" Value="SetRemoveProps" Order="1">1</Publish>
-         <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
+         <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="EndDialog" Value="Return" Order="2">1</Publish>
       </UI>
 
    </Fragment>
