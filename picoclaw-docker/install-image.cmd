@@ -12,11 +12,19 @@ echo ========================================
 echo          VPOT Install Script
 echo ========================================
 echo.
-echo    1. 中文 (Chinese)
-echo    2. English
-echo.
-choice /c 12 /n /m "  Select language / 请选择语言 (1=中文, 2=English) [1]: "
-if errorlevel 2 (set "LANG=en") else (set "LANG=zh")
+:: 语言参数:%~1 = zh/zh-CN(中文)或 en/en-US(英文);缺省走交互选择
+set "LANG="
+if /i not "%~1"=="" (
+    if /i "%~1:~0,2"=="zh" set "LANG=zh"
+    if /i "%~1:~0,2"=="en" set "LANG=en"
+)
+if not defined LANG (
+    echo    1. 中文 (Chinese)
+    echo    2. English
+    echo.
+    choice /c 12 /n /m "  Select language / 请选择语言 (1=中文, 2=English) [1]: "
+    if errorlevel 2 (set "LANG=en") else (set "LANG=zh")
+)
 
 :: ---------------- 按语言设置消息 ----------------
 if "!LANG!"=="zh" (
@@ -72,7 +80,7 @@ if errorlevel 1 (
     echo     !M_DOCKER_NOT_RUNNING!
     echo     !M_RETRY!
     echo.
-    pause >nul
+    ping -n 6 127.0.0.1 >nul
     goto retry_docker
 )
 echo     !M_DOCKER_RUNNING!
@@ -81,7 +89,7 @@ echo     !M_DOCKER_RUNNING!
 call :StartVpotContainers
 if errorlevel 1 (
     echo.
-    pause
+    ping -n 6 127.0.0.1 >nul
     exit /b 1
 )
 
@@ -93,7 +101,7 @@ echo ========================================
 start "" "http://localhost:18800"
 echo.
 echo !M_ANYKEY!
-pause >nul
+ping -n 6 127.0.0.1 >nul
 exit /b 0
 
 :: -------------------------------------------------------------------

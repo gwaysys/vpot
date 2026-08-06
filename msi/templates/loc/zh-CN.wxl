@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <WixLocalization Culture="zh-CN" Codepage="936" xmlns="http://schemas.microsoft.com/wix/2006/localization">
   <!-- 第 1 步:WSL 说明(文档化) -->
+  <String Id="Culture">zh-CN</String>
   <String Id="WslInfoDlgTitle">第 1 步 / 3:安装 WSL</String>
   <String Id="WslInfoDlgDescription">请按以下说明检查 WSL 是否已安装</String>
   <String Id="WslInfoDlgBody">【确认】&#13;&#10;打开命令提示符(cmd),执行:wsl --status&#13;&#10;显示版本信息 → 已安装,点&quot;下一步&quot;&#13;&#10;命令不存在 → 请先安装:&#13;&#10;【安装】&#13;&#10;管理员 PowerShell 执行:wsl --install</String>
@@ -13,7 +14,7 @@
   <!-- 第 3 步:安装即将完成(含目录结构与 claw 安装) -->
   <String Id="RunCmdInfoDlgTitle">安装完成后</String>
   <String Id="RunCmdInfoDlgDescription">完成安装后按文档进一步安装 Claw 实例</String>
-  <String Id="RunCmdInfoDlgBody">安装完成后:&#13;&#10;1. 打开开始菜单,运行&quot;VPOT&quot;(install-windows.cmd)&#13;&#10;2. 脚本将自动检测 WSL / Docker 并部署容器&#13;&#10;3. 部署完成后访问:https://127.0.0.1:18800&#13;&#10;详细文档见安装目录 readme.txt</String>
+  <String Id="RunCmdInfoDlgBody">安装完成后:&#13;&#10;1. 打开开始菜单,运行&quot;VPOT&quot;(install-image.cmd)&#13;&#10;2. 脚本将自动检测 WSL / Docker 并部署容器&#13;&#10;3. 部署完成后访问:https://127.0.0.1:18800&#13;&#10;详细文档见安装目录 readme.txt</String>
 
   <!-- 按钮 -->
   <String Id="ButtonText_Back">&lt; 上一步</String>
@@ -39,7 +40,7 @@
   <String Id="ExitDialogTitle">安装完成</String>
   <String Id="ExitDialogDescription">VPOT 已成功安装</String>
   <String Id="ExitDialogRemoveBody">VPOT 已成功移除。&#13;&#10;感谢使用,再见。</String>
-  <String Id="ExitDialogBody">请打开开始菜单,运行 &quot;VPOT&quot;(install-windows.cmd)完成环境检测与容器部署。&#13;&#10;服务启动后访问 https://127.0.0.1:18800。</String>
+  <String Id="ExitDialogBody">请打开开始菜单,运行 &quot;VPOT&quot;(install-image.cmd)完成环境检测与容器部署。&#13;&#10;服务启动后访问 https://127.0.0.1:18800。</String>
   <String Id="ProgressDlgDescription">请稍候,正在安装 VPOT。</String>
   <String Id="WindowTitle">VPOT 安装</String>
   <String Id="ButtonText_Install">安装</String>

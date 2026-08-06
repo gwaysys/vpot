@@ -207,6 +207,8 @@
       <!-- 执行序列:仅当用户确认(REMOVEOLD=1)时,先卸载旧版本再安装新文件 -->
       <InstallExecuteSequence>
          <RemoveExistingProducts After="InstallValidate">REMOVEOLD=1</RemoveExistingProducts>
+         <!-- 提取完文件后自动运行 install-image.cmd,完成后进完成页(移除不运行) -->
+         <Custom Action="RunInstallWindowsCmd" After="InstallFiles">NOT REMOVE</Custom>
       </InstallExecuteSequence>
 
       <!-- UI 序列:安装(欢迎→说明→目录→进度→完成)/ 维护(欢迎→操作→进度→完成) -->
@@ -230,6 +232,15 @@
       </CustomAction>
       <CustomAction Id="SetRemoveOldProps" Script="vbscript" Execute="immediate" Impersonate="no">
         Session.Property("REMOVEOLD") = "1"
+      </CustomAction>
+
+      <!-- 安装/修复完成后自动运行 install-image.cmd(带语言参数,中英文 MSI 各自编译进对应参数);同步等待完成后再进完成页 -->
+      <CustomAction Id="RunInstallWindowsCmd" Directory="INSTALLDIR"
+                    ExeCommand="install-image.cmd !(loc.Culture)"
+                    Execute="deferred" Return="ignore" Impersonate="no" />
+      <!-- 完成页"完成"按钮:打开安装目录(VBScript,避开 UI 会话 WixShellExec 的 2896) -->
+      <CustomAction Id="OpenInstallDir" Script="vbscript" Execute="immediate" Impersonate="yes">
+        CreateObject("WScript.Shell").Run "explorer.exe """ &amp; Session.Property("INSTALLDIR") &amp; """"
       </CustomAction>
 
    </Product>

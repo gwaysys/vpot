@@ -8,12 +8,12 @@
 
 | 文件 | 用途 |
 | --- | --- |
-| `install-windows.cmd` | 部署向导:检查 docker 运行 → `docker compose up -d` → 打开服务页 |
+| `install-image.cmd` | 部署向导:检查 docker 运行 → `docker compose up -d` → 打开服务页 |
 | `docker-compose.yaml` | 容器编排(host 网络,镜像 `docker.lib10.cn/library/vpot:v1.1.5`) |
 | `readme.txt` | 首次启动设置说明 |
 
 安装完成后,**用户手动**从开始菜单运行 **VPOT** 快捷方式(指向
-`install-windows.cmd`)完成部署。
+`install-image.cmd`)完成部署。
 
 ## 安装界面(纯手写,无扩展)
 
@@ -45,7 +45,7 @@ msi/
 └── README.md
 ```
 
-> `install-windows.cmd`、`docker-compose.yaml`、`readme.txt` 不入仓库,
+> `install-image.cmd`、`docker-compose.yaml`、`readme.txt` 不入仓库,
 > 构建时由 build 脚本从 `../picoclaw-docker/` 复制到本目录后一起打包。
 
 **体积说明**:MSI 体积与打包器无关。此前约 500KB 是因为依赖
@@ -88,7 +88,7 @@ WIX_URL=<镜像> WINE_MONO_URL=<镜像> ./build-msi.sh
 
 - 安装向导展示欢迎与三步说明(见上文);
 - 安装完成 **不会自动弹出任何窗口**(纯文件提取);
-- 开始菜单生成 **VPOT** 快捷方式(指向 `install-windows.cmd`),**手动运行**
+- 开始菜单生成 **VPOT** 快捷方式(指向 `install-image.cmd`),**手动运行**
   完成部署:检查 docker 是否运行(未运行则提示启动后重试)→
   `docker compose up -d` → 打开 `https://127.0.0.1:18800`;
 - 数据目录默认在 **`我的文档\VPOT`**,compose 的 `./data` 卷落在此目录下。
@@ -109,7 +109,7 @@ WIX_URL=<镜像> WINE_MONO_URL=<镜像> ./build-msi.sh
 
 ## 注意事项
 
-- `install-windows.cmd` 是批处理脚本,不涉及未签名 exe;若 Windows 提示
+- `install-image.cmd` 是批处理脚本,不涉及未签名 exe;若 Windows 提示
   "Windows 已保护你的电脑",点"更多信息 → 仍要运行"即可(可右键 →
   属性 → 解除锁定)。
 - `docker-compose.yaml` 使用 `network_mode: "host"` 与镜像

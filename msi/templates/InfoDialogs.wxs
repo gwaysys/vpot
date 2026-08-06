@@ -47,7 +47,7 @@
             <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="$(loc.ButtonText_Cancel)"><Publish Event="SpawnDialog" Value="CancelDlg">1</Publish></Control>
          </Dialog>
 
-         <!-- 第 3 步:手动运行 install-windows.cmd 说明 -->
+         <!-- 第 3 步:手动运行 install-image.cmd 说明 -->
          <!-- 第 3 步说明已并入"即将完成"页(VerifyReadyDlg) -->
 
       </UI>

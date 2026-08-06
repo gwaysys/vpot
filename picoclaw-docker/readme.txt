@@ -1,6 +1,6 @@
 安装说明：
 1. 将本目录放在大于1GB空余硬盘空间下；
-2. 双击install-windows.cmd，自动在windows上安装docker与拉取镜像自动启动;
+2. 双击install-image.cmd，自动在windows上安装docker与拉取镜像自动启动;
 3. 脚本会自动打开浏览器，如果没有自动打开浏览器，请输动输入https://localhost:18800;
 4. 根据打开的页面首次需要设置密码并记好您的密码;
 5. 申请第三方大模型的接入key，如：https://platform.deepseek.com/

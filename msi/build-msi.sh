@@ -49,9 +49,9 @@ if [ ! -x "$GO_MSI" ]; then
     [ -x "$GO_MSI" ] || die "go-msi 安装失败"
 fi
 
-# 1. 准备打包文件(install-windows.cmd / docker-compose.yaml / readme.txt)
+# 1. 准备打包文件(install-image.cmd / docker-compose.yaml / readme.txt)
 step "准备打包文件"
-cp -f "$REPO_ROOT/picoclaw-docker/install-windows.cmd" "$MSI_DIR/"
+cp -f "$REPO_ROOT/picoclaw-docker/install-image.cmd" "$MSI_DIR/"
 cp -f "$REPO_ROOT/picoclaw-docker/docker-compose.yaml" "$MSI_DIR/"
 cp -f "$REPO_ROOT/picoclaw-docker/readme.txt" "$MSI_DIR/"
 cp -f "$REPO_ROOT/picoclaw-docker/image-guide.png" "$MSI_DIR/"

@@ -1,7 +1,7 @@
 # 构建产物(由 build-msi.sh 生成,勿提交)
 *.exe
 *.msi
-install-windows.cmd
+install-image.cmd
 docker-compose.yaml
 readme.txt
 docker/wix311-binaries.zip

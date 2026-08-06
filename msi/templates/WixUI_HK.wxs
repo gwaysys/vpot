@@ -128,8 +128,9 @@
 
          <!-- ============ 事件链 ============ -->
 
-         <!-- 完成后直接退出(不打开安装目录:UI 会话提权启动 GUI 受限,报 2896) -->
-         <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return">1</Publish>
+         <!-- 完成后打开安装目录(VBScript 动作)+ 退出 -->
+         <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="OpenInstallDir" Order="1">1</Publish>
+         <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="2">1</Publish>
 
          <!-- 安装:欢迎 → 旧版询问 / 三步说明 -->
          <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="OldVersionDlg">NOT Installed AND VPOT_OLD_FOUND</Publish>
@@ -149,7 +150,7 @@
          <Publish Dialog="DockerInfoDlg" Control="Back" Event="NewDialog" Value="WslInfoDlg">1</Publish>
          <Publish Dialog="DockerInfoDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg">1</Publish>
 
-         <!-- 第 3 步:手动运行 install-windows.cmd 说明 -->
+         <!-- 第 3 步:手动运行 install-image.cmd 说明 -->
 
          <!-- 目录选择 -->
          <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="DockerInfoDlg">1</Publish>
