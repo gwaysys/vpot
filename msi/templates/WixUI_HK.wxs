@@ -9,6 +9,7 @@
 
          <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
          <Property Id="WixUI_Mode" Value="InstallDir" />
+         <Property Id="ErrorDialog" Value="ErrorDlg" />
 
          <!-- 自定义对话框(三步说明 / 旧版询问)-->
          <DialogRef Id="OldVersionDlg"/>
@@ -117,6 +118,14 @@
                <Publish Event="EndDialog" Value="Return">1</Publish>
             </Control>
             <Control Id="Text" Type="Text" X="35" Y="20" Width="210" Height="20" Text="!(loc.CancelDlgText)"/>
+         </Dialog>
+
+         <!-- 错误对话框(msiexec 出错时显示;ErrorDialog=yes 官方标志) -->
+         <Dialog Id="ErrorDlg" Width="260" Height="85" Title="!(loc.WindowTitle)" NoMinimize="yes" ErrorDialog="yes">
+            <Control Id="ErrorText" Type="Text" X="15" Y="15" Width="230" Height="50" TabSkip="no" Text="[Error1]"/>
+            <Control Id="OK" Type="PushButton" X="102" Y="57" Width="56" Height="17" Default="yes" Cancel="yes" Text="!(loc.ButtonText_OK)">
+               <Publish Event="EndDialog" Value="Return">1</Publish>
+            </Control>
          </Dialog>
 
          <!-- 目录浏览(更改安装目录) -->
