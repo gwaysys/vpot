@@ -50,7 +50,7 @@ if "!LANG!"=="zh" (
     set "M_UP_OK=    容器启动成功。"
     set "M_COMPLETE_TITLE=VPOT 部署完成!"
     set "M_SERVICE_URL=服务地址:"
-set "M_OPEN_BROWSER=安装成功！是否在浏览器中打开页面？[Y/n] "
+set "M_OPEN_BROWSER=安装成功，是否在浏览器中打开页面 "
     set "M_ANYKEY=按任意键退出..."
 ) else (
     set "M_CHECK_DOCKER=[*] Checking if Docker daemon is running..."
@@ -74,7 +74,7 @@ set "M_OPEN_BROWSER=安装成功！是否在浏览器中打开页面？[Y/n] "
     set "M_UP_OK=    Containers started successfully."
     set "M_COMPLETE_TITLE=VPOT deployment complete!"
     set "M_SERVICE_URL=Service available at:"
-set "M_OPEN_BROWSER=Deployment complete! Open the page in your browser? [Y/n] "
+set "M_OPEN_BROWSER=Deployment complete, open the page in your browser "
     set "M_ANYKEY=Press any key to exit..."
 )
 
@@ -124,8 +124,8 @@ start "" "https://localhost:18800"
 :skip_browser
 echo.
 echo !M_ANYKEY!
-ping -n 6 127.0.0.1 >nul
-exit /b 0
+pause >nul
+exit
 
 :: -------------------------------------------------------------------
 :: Start VPOT containers (compose plugin detection, cleanup, up -d)
