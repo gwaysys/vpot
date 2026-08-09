@@ -15,7 +15,7 @@
 #   WIX_URL=... WINE_MONO_URL=... ./build-msi-docker.sh
 set -euo pipefail
 
-VERSION="${1:-v1.2.0}"
+VERSION="${1:-v1.2.1}"
 # 默认一键生成双语;显式传第 2 个参数则只构建该语言
 if [ -n "${2:-}" ]; then
     CULTURES=("$2")
